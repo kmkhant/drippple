@@ -16,6 +16,17 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@/auth/*": ["src/auth/*"],
+      "@/mail/*": ["src/mail/*"],
+      "@/users/*": ["src/users/*"],
+      "@/config/*": ["src/config/*"],
+      "@/resume/*": ["src/resume/*"],
+      "@/filters/*": ["src/filters/*"],
+      "@/database/*": ["src/database/*"],
+      "@/constants/*": ["src/constants/*"],
+      "@/decorators/*": ["src/decorators/*"]
+    }
   }
 }
