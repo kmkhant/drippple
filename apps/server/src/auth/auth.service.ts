@@ -1,12 +1,126 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { SchedulerRegistry } from '@nestjs/schedule';
 import { compareSync, hashSync } from 'bcryptjs';
+
+// Google auth
+// TO-DO
+import { PostgresErrorCode } from '@/database/errorCodes.enum';
+import { CreateGoogleUserDto } from '@/users/dto/create-google-user.dto';
+import { User } from '@/users/entities/user.entity';
+import { UsersService } from '@/users/users.service';
+
+import { RegisterDto } from './dto/register.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private configService: ConfigService,
     private jwtService: JwtService,
+    private usersService: UsersService,
+    private schedulerRegistry: SchedulerRegistry,
   ) {}
+
+  async register(registerDto: RegisterDto) {
+    const password = hashSync(registerDto.password);
+
+    try {
+      const createdUser = await this.usersService.create({
+        ...registerDto,
+        password,
+        provider: 'email',
+      });
+
+      return createdUser;
+    } catch (error: any) {
+      if (error?.code === PostgresErrorCode.UniqueViolation) {
+        throw new HttpException(
+          'A user with that username and/or email already exists.',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async verifyPassword(password: string, hashedPassword: string) {
+    const isPasswordMatching = compareSync(password, hashedPassword);
+
+    if (!isPasswordMatching) {
+      throw new HttpException(
+        'The username/email and password combination provided was incorrect.',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+  }
+
+  async getUser(identifier: string, password: string) {
+    try {
+      const user = await this.usersService.findByIdentifier(identifier);
+
+      await this.verifyPassword(password, user.password);
+
+      return user;
+    } catch (error) {
+      throw new HttpException(
+        'The username/email and password combination provided was incorrect.',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+  }
+
+  updateProfile(id: number, newData: UpdateProfileDto) {
+    return this.usersService.update(id, { name: newData.name });
+  }
+
+  forgotPassword(email: string) {
+    return this.usersService.generateResetToken(email);
+  }
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    const user = await this.usersService.findByResetToken(
+      resetPasswordDto.resetToken,
+    );
+
+    const password = hashSync(resetPasswordDto.password);
+
+    await this.usersService.update(user.id, {
+      password,
+      resetToken: null,
+    });
+
+    try {
+      this.schedulerRegistry.deleteTimeout(`clear-reset-Token-${user.id}`);
+    } catch {
+      // pass through
+    }
+  }
+
+  removeUser(id: number) {
+    return this.usersService.remove(id);
+  }
+
+  getAccessToken(id: number) {
+    const expiresIn = this.configService.get<number>('auth.jwtExpiryTime');
+
+    return this.jwtService.sign(
+      { id },
+      {
+        expiresIn,
+      },
+    );
+  }
+
+  getUserFromAccessToken(accessToken: string) {
+    const payload: User = this.jwtService.verify(accessToken, {
+      secret: this.configService.get<string>('auth.jwtSecret'),
+    });
+
+    return this.usersService.findById(payload.id);
+  }
+
+  // TODO Authenicate with google
 }
