@@ -75,7 +75,7 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const user = this.findById(id);
+    const user = await this.findById(id);
     const updatedUser = {
       ...user,
       ...updateUserDto,

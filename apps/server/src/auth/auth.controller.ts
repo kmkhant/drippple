@@ -31,6 +31,13 @@ export class AuthController {
   }
 
   // TodoGoogle
+  @Post('google')
+  async loginWithGoogle(@Body('credential') credential: string) {
+    const user = await this.authService.authenicateWithGoogle(credential);
+    const accessToken = this.authService.getAccessToken(user.id);
+
+    return { user, accessToken };
+  }
 
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {

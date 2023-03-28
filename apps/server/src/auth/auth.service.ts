@@ -8,6 +8,7 @@ import { compareSync, hashSync } from 'bcryptjs';
 // TO-DO
 import { PostgresErrorCode } from '@/database/errorCodes.enum';
 import { CreateGoogleUserDto } from '@/users/dto/create-google-user.dto';
+import { OAuth2Client } from 'google-auth-library';
 import { User } from '@/users/entities/user.entity';
 import { UsersService } from '@/users/users.service';
 
@@ -123,4 +124,33 @@ export class AuthService {
   }
 
   // TODO Authenicate with google
+  async authenicateWithGoogle(credential: string) {
+    const clientID = this.configService.get<string>('google.clientID');
+    const clientSecret = this.configService.get<string>('google.clientSecret');
+
+    const OAuthClient = new OAuth2Client(clientID, clientSecret);
+    const client = await OAuthClient.verifyIdToken({ idToken: credential });
+    const userPayload = client.getPayload();
+
+    try {
+      const user = await this.usersService.findByEmail(userPayload.email);
+
+      if (user === undefined) {
+        const username = userPayload.email.split('@')[0];
+
+        const createUserDto: CreateGoogleUserDto = {
+          name: `${userPayload.given_name} ${userPayload.family_name}`,
+          username,
+          email: userPayload.email,
+          provider: 'google',
+        };
+        return this.usersService.create(createUserDto);
+      }
+      return user;
+    } catch (error: any) {
+      if (error.status !== HttpStatus.NOT_FOUND) {
+        throw new HttpException(error, HttpStatus.BAD_GATEWAY);
+      }
+    }
+  }
 }

@@ -37,6 +37,7 @@
     "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.6",
     "dayjs": "^1.11.7",
+    "google-auth-library": "^8.7.0",
     "joi": "^17.8.4",
     "lodash": "^4.17.21",
     "multer": "1.4.5-lts.1",
