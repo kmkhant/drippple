@@ -1,4 +1,5 @@
 import { Exclude } from 'class-transformer';
+import { Shot } from 'src/shots/entities/shot.entity';
 import {
   Column,
   CreateDateColumn,
@@ -16,6 +17,9 @@ export class User {
   @Column()
   name: string;
 
+  @Column()
+  profileImage: string;
+
   @Column({ unique: true })
   username: string;
 
@@ -30,7 +34,16 @@ export class User {
   @Exclude()
   resetToken?: string;
 
-  // implement projects
+  // implement shots
+  // list of user created shots
+  @OneToMany(() => Shot, (shot) => shot.id)
+  shots: Shot[];
+
+  // implement collections
+  // a list of shots from other users
+
+  @Column({ default: 0 })
+  likedShots: number;
 
   @Column()
   provider: 'email' | 'google';

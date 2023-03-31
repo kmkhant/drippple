@@ -14,9 +14,8 @@ async function bootstrap() {
   // Middleware
   app.enableCors({ origin: [appUrl], credentials: true });
   app.enableShutdownHooks();
-  app.use(cookieParser());
 
-  // Pipes
+  app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   // Server Port
