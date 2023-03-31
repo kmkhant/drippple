@@ -1,9 +1,3 @@
-import {
-	CredentialResponse,
-	GoogleLogin,
-} from "@react-oauth/google";
-
-import back_video from "../../assets/backgroundVideo.mp4";
 import CategoryLink from "./CategoryLink";
 import classes from "./Hero.module.css";
 const Hero = () => {
@@ -21,7 +15,7 @@ const Hero = () => {
 				<CategoryLink>Web Design</CategoryLink>
 			</ul>
 			<div className={classes["hero-media"]}>
-				<video src={back_video} autoPlay muted loop>
+				<video src={"//"} autoPlay muted loop>
 					Sorry, your browser doesn't support videos.
 				</video>
 			</div>
@@ -58,13 +52,7 @@ const Hero = () => {
 				<li className={classes.item}>uxdesign</li>
 				<li className={classes.item}>app design</li>
 			</ul>
-			<div>
-				<GoogleLogin
-					onSuccess={(response: CredentialResponse) => {
-						console.log(response);
-					}}
-				/>
-			</div>
+			<div></div>
 		</div>
 	);
 };
