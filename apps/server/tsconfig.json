@@ -20,7 +20,9 @@
     "paths": {
       "@/auth/*": ["src/auth/*"],
       "@/mail/*": ["src/mail/*"],
-      "@/users/*": ["src/users/*"],
+      "@/users/*": ["src/database/users/*"],
+      "@/collections/*": ["src/database/collections"],
+      "@/shots/*": ["src/database/shots/*"],
       "@/config/*": ["src/config/*"],
       "@/resume/*": ["src/resume/*"],
       "@/filters/*": ["src/filters/*"],

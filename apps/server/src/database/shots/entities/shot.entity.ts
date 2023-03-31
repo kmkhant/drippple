@@ -2,11 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Comment } from './comment.entity';
+import { User } from '@/users/entities/user.entity';
 
 @Entity('shots')
 export class Shot {
@@ -16,12 +19,16 @@ export class Shot {
   @Column()
   title: string;
 
-  // implement markdown data store
+  // implement description
   @Column()
   description: string;
 
   @Column()
   shotImage: string;
+
+  // shot own user
+  @ManyToOne(() => User, (user) => user.id)
+  user: User;
 
   @Column('number', { default: 0 })
   likes: number;

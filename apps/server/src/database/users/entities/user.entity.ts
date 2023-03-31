@@ -1,13 +1,16 @@
 import { Exclude } from 'class-transformer';
-import { Shot } from 'src/shots/entities/shot.entity';
+import { Shot } from '@/shots/entities/shot.entity';
+
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Collection } from '@/database/collections/entities/collection.entity';
 
 @Entity('users')
 export class User {
@@ -37,10 +40,13 @@ export class User {
   // implement shots
   // list of user created shots
   @OneToMany(() => Shot, (shot) => shot.id)
+  @JoinColumn()
   shots: Shot[];
 
   // implement collections
-  // a list of shots from other users
+  // list of shots from other users
+  @OneToMany(() => Collection, (collection) => collection.id)
+  collections: Collection[];
 
   @Column({ default: 0 })
   likedShots: number;

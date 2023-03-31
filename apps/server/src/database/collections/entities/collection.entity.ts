@@ -2,29 +2,29 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
-import { Replies } from './replies.entity';
 import { User } from '@/users/entities/user.entity';
+import { Shot } from '@/shots/entities/shot.entity';
 
-@Entity('comments')
-export class Comment {
+@Entity('collections')
+export class Collection {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // implement comment user
-  @OneToOne(() => User, (user) => user.id)
+  // implement comment owner
+  @ManyToOne(() => User, (user) => user.id)
   user: User;
+
+  @OneToMany(() => Shot, (shot) => shot.id)
+  shots: Shot[];
 
   @Column()
   description: string;
-
-  // implement reply
-  @OneToMany(() => Replies, (reply) => reply.id)
-  replies: Replies[];
 
   @CreateDateColumn()
   createdAt: Date;
