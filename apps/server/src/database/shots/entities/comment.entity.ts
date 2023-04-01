@@ -8,7 +8,6 @@ import {
   UpdateDateColumn,
   JoinColumn,
 } from 'typeorm';
-import { Reply } from './reply.entity';
 import { User } from '@/users/entities/user.entity';
 
 @Entity('comments')
@@ -17,16 +16,15 @@ export class Comment {
   id: number;
 
   // implement comment owner
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
   @JoinColumn()
   user: User;
 
   @Column()
   description: string;
 
-  // implement reply
-  @OneToMany(() => Reply, (reply) => reply.id)
-  replies: Reply[];
+  @Column()
+  replies: Comment[];
 
   @CreateDateColumn()
   createdAt: Date;

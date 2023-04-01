@@ -11,6 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Collection } from '@/database/collections/entities/collection.entity';
+import { Comment } from '@/shots/entities/comment.entity';
 
 @Entity('users')
 export class User {
@@ -39,14 +40,16 @@ export class User {
 
   // implement shots
   // list of user created shots
-  @OneToMany(() => Shot, (shot) => shot.id)
-  @JoinColumn()
+  @OneToMany(() => Shot, (shot) => shot.user)
   shots: Shot[];
 
   // implement collections
   // list of shots from other users
-  @OneToMany(() => Collection, (collection) => collection.id)
+  @OneToMany(() => Collection, (collection) => collection.user)
   collections: Collection[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 
   @Column({ default: 0 })
   likedShots: number;

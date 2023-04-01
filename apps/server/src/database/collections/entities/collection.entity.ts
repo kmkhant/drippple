@@ -17,10 +17,12 @@ export class Collection {
   id: number;
 
   // implement comment owner
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.collections, { onDelete: 'CASCADE' })
+  @JoinColumn()
   user: User;
 
-  @OneToMany(() => Shot, (shot) => shot.id)
+  // relation with shots
+  @OneToMany(() => Shot, (shot) => shot.collection)
   shots: Shot[];
 
   @Column()

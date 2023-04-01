@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Comment } from './comment.entity';
 import { User } from '@/users/entities/user.entity';
+import { Collection } from '@/database/collections/entities/collection.entity';
 
 @Entity('shots')
 export class Shot {
@@ -27,8 +28,13 @@ export class Shot {
   shotImage: string;
 
   // shot own user
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.shots, { onDelete: 'CASCADE' })
+  @JoinColumn()
   user: User;
+
+  // collection
+  @ManyToOne(() => Collection, (collection) => collection.shots)
+  collection: Collection;
 
   @Column('number', { default: 0 })
   likes: number;
