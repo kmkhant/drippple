@@ -18,6 +18,7 @@ import { MailModule } from './mail/mail.module';
 import { UsersModule } from '@/users/users.module';
 
 import { HttpExceptionFilter } from './filters/http-exception.filter';
+import { ShotModule } from '@/shots/shot.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { HttpExceptionFilter } from './filters/http-exception.filter';
     DatabaseModule,
     AppModule,
     AuthModule,
+    ShotModule,
     MailModule.register(),
     UsersModule,
   ],

@@ -26,4 +26,43 @@ export class ShotsService {
 
     return comment;
   }
+
+  // All Shot CRUD
+  async createShot(createShotDto: CreateShotDto): Promise<Shot> {
+    const shot = this.shotRepository.create(createShotDto);
+    await this.shotRepository.save(shot);
+
+    return shot;
+  }
+
+  async getShots() {
+    const shots = await this.shotRepository.find();
+    return shots;
+  }
+
+  async updateShot(id: number, updateShotDto: UpdateShotDto) {
+    const shot = await this.shotRepository.findOneBy({ id: id });
+    const updatedShot = {
+      ...shot,
+      ...updateShotDto,
+    };
+
+    await this.shotRepository.save(updatedShot);
+
+    return updatedShot;
+  }
+
+  async deleteShot(id: number) {
+    await this.shotRepository.delete(id);
+  }
+
+  // get shots by user
+  async getShotsByUser(userId: number) {
+    const shotsByUser = this.shotRepository
+      .createQueryBuilder('shots')
+      .where('shots.user.id = :id', { id: userId })
+      .getMany();
+
+    return shotsByUser;
+  }
 }

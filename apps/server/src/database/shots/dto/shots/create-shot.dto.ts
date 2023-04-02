@@ -1,11 +1,8 @@
-import { IsString, IsNotEmpty, Matches } from 'class-validator';
+import { IsString, IsNotEmpty, Matches, IsArray } from 'class-validator';
 
 export class CreateShotDto {
   @IsString()
   @IsNotEmpty()
-  @Matches(/^[A-Za-z0-9-]+$/, {
-    message: 'username can contain only characters, numbers and hyphens',
-  })
   title: string;
 
   @IsString()
@@ -16,6 +13,7 @@ export class CreateShotDto {
   @IsNotEmpty()
   shotImage: string;
 
-  @IsString()
+  @IsArray()
+  @IsString({ each: true })
   tags: string[];
 }

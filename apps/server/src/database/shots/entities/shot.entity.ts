@@ -38,17 +38,17 @@ export class Shot {
   @Column('int', { default: 0 })
   likes: number;
 
-  @Column()
+  @Column({ default: 0 })
   views: number;
 
-  @Column()
+  @Column({ default: 0 })
   saves: number;
 
   @OneToMany(() => Comment, (comment) => comment.id)
   @JoinColumn()
   comments: Comment[];
 
-  @Column('simple-array', { array: true, nullable: true, default: [] })
+  @Column('varchar', { array: true, nullable: true, default: [] })
   tags: string[];
 
   @CreateDateColumn()

@@ -27,7 +27,6 @@ export class Collection {
 
   @Column()
   description: string;
-
   @CreateDateColumn()
   createdAt: Date;
 

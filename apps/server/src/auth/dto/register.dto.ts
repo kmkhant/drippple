@@ -1,6 +1,7 @@
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUrl,
   MinLength,
@@ -23,5 +24,6 @@ export class RegisterDto {
   password: string;
 
   @IsUrl()
-  profileImage: string;
+  @IsOptional()
+  profileImage?: string;
 }
