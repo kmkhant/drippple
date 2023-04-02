@@ -29,14 +29,13 @@ export class Shot {
 
   // shot own user
   @ManyToOne(() => User, (user) => user.shots, { onDelete: 'CASCADE' })
-  @JoinColumn()
   user: User;
 
   // collection
   @ManyToOne(() => Collection, (collection) => collection.shots)
   collection: Collection;
 
-  @Column('number', { default: 0 })
+  @Column('int', { default: 0 })
   likes: number;
 
   @Column()
@@ -46,9 +45,10 @@ export class Shot {
   saves: number;
 
   @OneToMany(() => Comment, (comment) => comment.id)
+  @JoinColumn()
   comments: Comment[];
 
-  @Column()
+  @Column('simple-array', { array: true, nullable: true, default: [] })
   tags: string[];
 
   @CreateDateColumn()

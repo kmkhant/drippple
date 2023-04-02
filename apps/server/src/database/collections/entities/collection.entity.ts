@@ -18,11 +18,11 @@ export class Collection {
 
   // implement comment owner
   @ManyToOne(() => User, (user) => user.collections, { onDelete: 'CASCADE' })
-  @JoinColumn()
   user: User;
 
   // relation with shots
   @OneToMany(() => Shot, (shot) => shot.collection)
+  @JoinColumn()
   shots: Shot[];
 
   @Column()

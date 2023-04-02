@@ -15,7 +15,7 @@ import { DatabaseModule } from './database/database.module';
 // Fonts Module
 // Integration Module
 import { MailModule } from './mail/mail.module';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from '@/users/users.module';
 
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 

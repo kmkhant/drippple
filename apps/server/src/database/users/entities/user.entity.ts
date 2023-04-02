@@ -21,7 +21,10 @@ export class User {
   @Column()
   name: string;
 
-  @Column()
+  @Column({
+    default:
+      'https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg',
+  })
   profileImage: string;
 
   @Column({ unique: true })
@@ -41,14 +44,17 @@ export class User {
   // implement shots
   // list of user created shots
   @OneToMany(() => Shot, (shot) => shot.user)
+  @JoinColumn()
   shots: Shot[];
 
   // implement collections
   // list of shots from other users
   @OneToMany(() => Collection, (collection) => collection.user)
+  @JoinColumn()
   collections: Collection[];
 
   @OneToMany(() => Comment, (comment) => comment.user)
+  @JoinColumn()
   comments: Comment[];
 
   @Column({ default: 0 })

@@ -3,12 +3,12 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   JoinColumn,
 } from 'typeorm';
 import { User } from '@/users/entities/user.entity';
+import { Shot } from './shot.entity';
 
 @Entity('comments')
 export class Comment {
@@ -17,13 +17,14 @@ export class Comment {
 
   // implement comment owner
   @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
-  @JoinColumn()
   user: User;
+
+  @ManyToOne(() => Shot, (shot) => shot.id)
+  shots: Shot;
 
   @Column()
   description: string;
 
-  @Column()
   replies: Comment[];
 
   @CreateDateColumn()
