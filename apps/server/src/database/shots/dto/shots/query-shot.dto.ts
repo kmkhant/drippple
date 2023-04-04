@@ -1,5 +1,5 @@
-import { Transform } from 'class-transformer';
-import { IsString, IsNotEmpty, Matches, IsNumber } from 'class-validator';
+import { User } from '@/users/entities/user.entity';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class QueryByUserDto {
   @IsNumber()

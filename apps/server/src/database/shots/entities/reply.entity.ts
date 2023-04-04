@@ -5,31 +5,25 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  JoinColumn,
-  OneToMany,
 } from 'typeorm';
 import { User } from '@/users/entities/user.entity';
-import { Shot } from './shot.entity';
-import { Reply } from './reply.entity';
+import { Comment } from './comment.entity';
 
-@Entity('comments')
-export class Comment {
+@Entity('replies')
+export class Reply {
   @PrimaryGeneratedColumn()
   id: number;
 
   // implement comment owner
-  @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.id)
   user: User;
 
   // implement comment from shots
-  @ManyToOne(() => Shot, (shot) => shot.comments, { onDelete: 'CASCADE' })
-  shot: Shot;
+  @ManyToOne(() => Comment, (comment) => comment.replies)
+  comment: Comment;
 
   @Column()
   description: string;
-
-  @OneToMany(() => Reply, (reply) => reply.comment)
-  replies: Reply[];
 
   @CreateDateColumn()
   createdAt: Date;
@@ -37,7 +31,7 @@ export class Comment {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  constructor(partial: Partial<Comment>) {
+  constructor(partial: Partial<Reply>) {
     Object.assign(this, partial);
   }
 }

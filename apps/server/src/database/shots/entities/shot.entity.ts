@@ -44,7 +44,7 @@ export class Shot {
   @Column({ default: 0 })
   saves: number;
 
-  @OneToMany(() => Comment, (comment) => comment.id)
+  @OneToMany(() => Comment, (comment) => comment.shot)
   @JoinColumn()
   comments: Comment[];
 

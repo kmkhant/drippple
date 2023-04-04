@@ -5,6 +5,7 @@ import { User } from '@/users/entities/user.entity';
 import { Collection } from './collections/entities/collection.entity';
 import { Comment } from './shots/entities/comment.entity';
 import { Shot } from './shots/entities/shot.entity';
+import { Reply } from './shots/entities/reply.entity';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { Shot } from './shots/entities/shot.entity';
         password: configService.get<string>('postgres.password'),
         database: configService.get<string>('postgres.database'),
         synchronize: true,
-        entities: [User, Collection, Comment, Shot],
+        entities: [User, Collection, Comment, Shot, Reply],
       }),
     }),
   ],

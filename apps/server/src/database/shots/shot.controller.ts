@@ -16,8 +16,9 @@ import { ShotsService } from './shots.service';
 import { CreateShotDto } from './dto/shots/create-shot.dto';
 import { UpdateShotDto } from './dto/shots/update-shot.dto';
 import { JwtAuthGuard } from '@/auth/guards/jwt.guard';
-import { Transform } from 'class-transformer';
 import { QueryByUserDto } from './dto/shots/query-shot.dto';
+import { CreateCommentDto } from './dto/comments/create-comment.dto';
+import { User as UserEntity } from '@/users/entities/user.entity';
 
 @Controller('shots')
 export class ShotsController {
@@ -40,5 +41,37 @@ export class ShotsController {
   @Post('/create')
   async createShot(@Body() createShotDto: CreateShotDto) {
     return this.shotService.createShot(createShotDto);
+  }
+
+  // Add Comment to a shot
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @Post('/:id/comment/create')
+  async addCommentToShotById(
+    @Param('id') id: number,
+    @Body() createCommentDto: CreateCommentDto,
+    @User() userEntity: UserEntity,
+  ) {
+    return this.shotService.addCommentToShotById(
+      id,
+      createCommentDto,
+      userEntity,
+    );
+  }
+
+  // Add Reply to a comment
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @Post('/comment/:id/reply/create')
+  async addReplyToCommentById(
+    @Param('id') commentId: number,
+    @Body() createCommentDto: CreateCommentDto,
+    @User() userEntity: UserEntity,
+  ) {
+    return this.shotService.addReplyToCommentById(
+      commentId,
+      createCommentDto,
+      userEntity,
+    );
   }
 }

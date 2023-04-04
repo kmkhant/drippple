@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, Matches, IsArray } from 'class-validator';
+import { IsString, IsNotEmpty, IsArray } from 'class-validator';
 
 export class CreateShotDto {
   @IsString()
