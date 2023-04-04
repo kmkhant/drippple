@@ -63,7 +63,7 @@ export class ShotsController {
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   @Post('/comment/:id/reply/create')
-  async addReplyToCommentById(
+  addReplyToCommentById(
     @Param('id') commentId: number,
     @Body() createCommentDto: CreateCommentDto,
     @User() userEntity: UserEntity,
@@ -73,5 +73,10 @@ export class ShotsController {
       createCommentDto,
       userEntity,
     );
+  }
+
+  @Get('/debug')
+  debug() {
+    return this.shotService.debug();
   }
 }

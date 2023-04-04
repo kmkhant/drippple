@@ -108,8 +108,20 @@ export class ShotsService {
       comment.replies.push(reply);
     }
 
+    await this.replyRepository.save(reply);
+
     await this.commentRepository.save(comment);
 
     return reply;
+  }
+
+  async debug() {
+    // const reply = await this.replyRepository.find({
+    //   relations: {
+    //     comment: true,
+    //   },
+    // });
+    // console.log(reply);
+    await this.commentRepository.delete({ id: 1 });
   }
 }

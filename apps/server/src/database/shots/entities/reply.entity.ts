@@ -19,7 +19,7 @@ export class Reply {
   user: User;
 
   // implement comment from shots
-  @ManyToOne(() => Comment, (comment) => comment.replies)
+  @ManyToOne(() => Comment, (comment) => comment.replies, { cascade: true })
   comment: Comment;
 
   @Column()

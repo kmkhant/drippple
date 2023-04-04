@@ -18,11 +18,11 @@ export class Comment {
   id: number;
 
   // implement comment owner
-  @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.comments, { cascade: true })
   user: User;
 
   // implement comment from shots
-  @ManyToOne(() => Shot, (shot) => shot.comments, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Shot, (shot) => shot.comments, { cascade: true })
   shot: Shot;
 
   @Column()
