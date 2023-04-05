@@ -44,9 +44,13 @@ export class ShotsController {
     return this.shotService.createShot(createShotDto);
   }
 
-  /* ---------------------------------- */
-
   /* Comment and Reply Routes */
+  // Get comment By shotId
+  @Get('/:id/comments')
+  async getCommentsByShotId(@Param('id') id: number) {
+    return this.shotService.getCommentsByShotId(id);
+  }
+
   // Add Comment to a shot
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
@@ -127,8 +131,7 @@ export class ShotsController {
     return this.shotService.deleteReply(id, userEntity);
   }
 
-  /* ---------------------------------- */
-
+  /* just a debug route */
   @Get('/debug')
   debug() {
     return this.shotService.debug();

@@ -69,6 +69,25 @@ export class ShotsService {
     return shotsByUser;
   }
 
+  /* Handle Comments */
+
+  async getCommentsByShotId(id: number) {
+    const shot = await this.shotRepository.findOne({
+      relations: ['comments', 'comments.replies'],
+      where: { id: id },
+      order: {
+        updatedAt: 'DESC',
+      },
+    });
+
+    // sort comments by date
+    const comments = shot.comments.sort(
+      (a, b) => a.updatedAt.getTime() - b.updatedAt.getTime(),
+    );
+
+    return comments;
+  }
+
   // Add Comment To shot By Shot ID
   async addCommentToShotById(
     id: number,
@@ -116,7 +135,6 @@ export class ShotsService {
     throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
   }
 
-  // Delete Comment
   async deleteComment(id: number, user: User) {
     // check if user
     const comment = await this.commentRepository.findOne({
@@ -134,7 +152,8 @@ export class ShotsService {
     }
   }
 
-  // Add Reply to a comment
+  /* Handle Replies */
+
   async addReplyToCommentById(
     commentId: number,
     createCommentDto: CreateCommentDto,
@@ -166,7 +185,6 @@ export class ShotsService {
     return reply;
   }
 
-  // Edit Reply By Id
   async editReplyById(replyId: number, replyDto: CreateCommentDto, user: User) {
     const reply = await this.replyRepository.findOne({
       relations: {
@@ -189,7 +207,6 @@ export class ShotsService {
     return await this.replyRepository.findOneBy({ id: replyId });
   }
 
-  // Delete Comment
   async deleteReply(id: number, user: User) {
     // check if user
     const comment = await this.replyRepository.findOne({
