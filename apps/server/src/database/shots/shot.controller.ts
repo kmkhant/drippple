@@ -29,6 +29,7 @@ export class ShotsController {
     return this.shotService.getShots();
   }
 
+  /* Shot Routes */
   // Get shots by user
   @Get('/user/:id')
   async getShotsByUser(@Param('id') queryByUserDto: QueryByUserDto) {
@@ -43,6 +44,9 @@ export class ShotsController {
     return this.shotService.createShot(createShotDto);
   }
 
+  /* ---------------------------------- */
+
+  /* Comment and Reply Routes */
   // Add Comment to a shot
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
@@ -54,22 +58,6 @@ export class ShotsController {
   ) {
     return this.shotService.addCommentToShotById(
       id,
-      createCommentDto,
-      userEntity,
-    );
-  }
-
-  // Add Reply to a comment
-  @HttpCode(200)
-  @UseGuards(JwtAuthGuard)
-  @Post('/comment/:id/reply/create')
-  addReplyToCommentById(
-    @Param('id') commentId: number,
-    @Body() createCommentDto: CreateCommentDto,
-    @User() userEntity: UserEntity,
-  ) {
-    return this.shotService.addReplyToCommentById(
-      commentId,
       createCommentDto,
       userEntity,
     );
@@ -94,7 +82,7 @@ export class ShotsController {
   // Edit Comment By Id
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
-  @Patch('/comment/reply/:id/edit')
+  @Patch('/comment/reply/edit/:id')
   editReplyById(
     @Param('id') commentId: number,
     @Body() createCommentDto: CreateCommentDto,
@@ -106,6 +94,40 @@ export class ShotsController {
       userEntity,
     );
   }
+
+  // Delete Comment
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @Delete('/comment/:id')
+  deleteComment(@Param('id') id: number, @User() userEntity: UserEntity) {
+    return this.shotService.deleteComment(id, userEntity);
+  }
+
+  // Add Reply to a comment
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @Post('/comment/:id/reply/create')
+  addReplyToCommentById(
+    @Param('id') commentId: number,
+    @Body() createCommentDto: CreateCommentDto,
+    @User() userEntity: UserEntity,
+  ) {
+    return this.shotService.addReplyToCommentById(
+      commentId,
+      createCommentDto,
+      userEntity,
+    );
+  }
+
+  // Delete Reply
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @Delete('/reply/:id')
+  deleteReply(@Param('id') id: number, @User() userEntity: UserEntity) {
+    return this.shotService.deleteReply(id, userEntity);
+  }
+
+  /* ---------------------------------- */
 
   @Get('/debug')
   debug() {

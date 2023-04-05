@@ -22,7 +22,6 @@ export class Collection {
 
   // relation with shots
   @OneToMany(() => Shot, (shot) => shot.collection)
-  @JoinColumn()
   shots: Shot[];
 
   @Column()

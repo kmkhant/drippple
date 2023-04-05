@@ -32,7 +32,9 @@ export class Shot {
   user: User;
 
   // collection
-  @ManyToOne(() => Collection, (collection) => collection.shots)
+  @ManyToOne(() => Collection, (collection) => collection.shots, {
+    onDelete: 'CASCADE',
+  })
   collection: Collection;
 
   @Column('int', { default: 0 })

@@ -116,6 +116,24 @@ export class ShotsService {
     throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
   }
 
+  // Delete Comment
+  async deleteComment(id: number, user: User) {
+    // check if user
+    const comment = await this.commentRepository.findOne({
+      relations: {
+        user: true,
+      },
+      where: { id: id },
+    });
+
+    // delete if user own
+    if (comment.user.id === user.id) {
+      await this.commentRepository.delete({ id: id });
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+  }
+
   // Add Reply to a comment
   async addReplyToCommentById(
     commentId: number,
@@ -169,6 +187,25 @@ export class ShotsService {
     );
 
     return await this.replyRepository.findOneBy({ id: replyId });
+  }
+
+  // Delete Comment
+  async deleteReply(id: number, user: User) {
+    // check if user
+    const comment = await this.replyRepository.findOne({
+      relations: {
+        user: true,
+      },
+      where: { id: id },
+    });
+
+    // delete if user own
+    if (comment.user.id === user.id) {
+      await this.replyRepository.delete({ id: id });
+      return { success: `Removed reply of id: ${id}` };
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
   }
 
   async debug() {
