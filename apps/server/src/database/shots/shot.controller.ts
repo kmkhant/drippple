@@ -75,6 +75,38 @@ export class ShotsController {
     );
   }
 
+  // Edit Comment By Id
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @Patch('/comment/:id/edit')
+  editCommentById(
+    @Param('id') commentId: number,
+    @Body() createCommentDto: CreateCommentDto,
+    @User() userEntity: UserEntity,
+  ) {
+    return this.shotService.editCommentById(
+      commentId,
+      createCommentDto,
+      userEntity,
+    );
+  }
+
+  // Edit Comment By Id
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @Patch('/comment/reply/:id/edit')
+  editReplyById(
+    @Param('id') commentId: number,
+    @Body() createCommentDto: CreateCommentDto,
+    @User() userEntity: UserEntity,
+  ) {
+    return this.shotService.editReplyById(
+      commentId,
+      createCommentDto,
+      userEntity,
+    );
+  }
+
   @Get('/debug')
   debug() {
     return this.shotService.debug();

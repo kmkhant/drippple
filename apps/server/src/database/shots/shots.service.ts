@@ -88,13 +88,46 @@ export class ShotsService {
     return comment;
   }
 
+  // Edit commentByCommentId
+  async editCommentById(
+    id: number,
+    createCommentDto: CreateCommentDto,
+    user: User,
+  ) {
+    // check if comment is owned by user
+    const comment = await this.commentRepository.findOne({
+      where: { id: id },
+      relations: ['user'],
+    });
+
+    // console.log(comment);
+    // if so, edit is approved
+    if (comment.user.id === user.id) {
+      await this.commentRepository.update(
+        { id: id },
+        {
+          ...createCommentDto,
+          updatedAt: new Date(),
+        },
+      );
+
+      return await this.commentRepository.findOneBy({ id: id });
+    }
+    throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+  }
+
   // Add Reply to a comment
   async addReplyToCommentById(
     commentId: number,
     createCommentDto: CreateCommentDto,
     user: User,
   ) {
-    const comment = await this.commentRepository.findOneBy({ id: commentId });
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId },
+      relations: {
+        replies: true,
+      },
+    });
 
     const reply = this.replyRepository.create({
       user: user,
@@ -113,6 +146,29 @@ export class ShotsService {
     await this.commentRepository.save(comment);
 
     return reply;
+  }
+
+  // Edit Reply By Id
+  async editReplyById(replyId: number, replyDto: CreateCommentDto, user: User) {
+    const reply = await this.replyRepository.findOne({
+      relations: {
+        user: true,
+      },
+      where: { id: replyId },
+    });
+
+    if (reply.user.id !== user.id)
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+
+    await this.replyRepository.update(
+      { id: replyId },
+      {
+        ...replyDto,
+        updatedAt: new Date(),
+      },
+    );
+
+    return await this.replyRepository.findOneBy({ id: replyId });
   }
 
   async debug() {

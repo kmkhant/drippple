@@ -19,7 +19,9 @@ export class Reply {
   user: User;
 
   // implement comment from shots
-  @ManyToOne(() => Comment, (comment) => comment.replies, { cascade: true })
+  @ManyToOne(() => Comment, (comment) => comment.replies, {
+    onDelete: 'CASCADE',
+  })
   comment: Comment;
 
   @Column()
@@ -35,3 +37,8 @@ export class Reply {
     Object.assign(this, partial);
   }
 }
+
+/*
+ALTER TABLE replies drop constraint "FK_3f3aaa45827962b1988ba2cf29f", ADD constraint "FK_3f3aaa45827962b1988ba2cf29f" FOREIGN KEY ("com
+mentId") REFERENCES comments(id) ON DELETE CASCADE;
+*/
