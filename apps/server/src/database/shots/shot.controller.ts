@@ -44,6 +44,18 @@ export class ShotsController {
     return this.shotService.createShot(createShotDto);
   }
 
+  // Like a shot
+  @UseGuards(JwtAuthGuard)
+  @Get('/:id/like')
+  async likeShot(@Param('id') id: number, @User() user: UserEntity) {
+    return this.shotService.likeShotByIdByUser(id, user);
+  }
+
+  @Get('/:id/getLikes')
+  async getShotLikesByUsers(@Param('id') id: number) {
+    return this.shotService.getShotLikesByUsers(id);
+  }
+
   /* Comment and Reply Routes */
   // Get comment By shotId
   @Get('/:id/comments')

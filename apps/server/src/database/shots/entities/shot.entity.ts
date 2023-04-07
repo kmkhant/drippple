@@ -4,6 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -37,10 +38,10 @@ export class Shot {
   })
   collection: Collection;
 
-  @Column('int', { default: 0 })
-  likes: number;
+  @ManyToMany(() => User, (user) => user.likedShots, { onDelete: 'CASCADE' })
+  likedUsers: User[];
 
-  @Column({ default: 0 })
+  @ManyToOne(() => User, (user) => user.username)
   views: number;
 
   @Column({ default: 0 })

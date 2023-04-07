@@ -6,6 +6,8 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -57,11 +59,19 @@ export class User {
   @JoinColumn()
   comments: Comment[];
 
-  @Column({ default: 0 })
-  likedShots: number;
+  @ManyToMany(() => Shot, (shot) => shot.likedUsers)
+  @JoinTable()
+  likedShots: Shot[];
 
   @Column()
   provider: 'email' | 'google';
+
+  @ManyToMany(() => User, (user) => user.following)
+  @JoinTable()
+  followers: User[];
+
+  @ManyToMany(() => User, (user) => user.followers)
+  following: User[];
 
   @CreateDateColumn()
   createdAt: Date;

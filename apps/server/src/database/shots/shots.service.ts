@@ -14,6 +14,8 @@ import { Comment } from './entities/comment.entity';
 import { User } from '@/users/entities/user.entity';
 import { Reply } from './entities/reply.entity';
 
+import { LikeActionType } from '@drippple/schema';
+
 @Injectable()
 export class ShotsService {
   constructor(
@@ -223,6 +225,49 @@ export class ShotsService {
     } else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
+  }
+
+  async likeShotByIdByUser(id: number, user: User) {
+    const shot = await this.shotRepository.findOne({
+      relations: {
+        likedUsers: true,
+      },
+      where: { id: id },
+    });
+
+    // check if user is already liked
+    let action: LikeActionType;
+
+    const likedUsers = shot.likedUsers;
+    const checkUser = likedUsers.filter((u) => u.id === user.id);
+
+    if (checkUser[0]) {
+      // console.log('FOUND');
+      action = LikeActionType.UNLIKE;
+      shot.likedUsers = likedUsers.filter((u) => u.id !== user.id);
+    } else {
+      // console.log('Not found');
+      action = LikeActionType.LIKE;
+      shot.likedUsers = [...shot.likedUsers, user];
+    }
+
+    // debug
+    // console.log(shot);
+    await this.shotRepository.save(shot);
+    return { success: 'OK', action: action.toString() };
+  }
+
+  async getShotLikesByUsers(id: number) {
+    const shot = await this.shotRepository.findOne({
+      relations: {
+        likedUsers: true,
+      },
+      where: { id: id },
+    });
+
+    const count = shot.likedUsers.length;
+
+    return { totalLikes: count };
   }
 
   async debug() {
