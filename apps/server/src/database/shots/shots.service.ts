@@ -265,16 +265,13 @@ export class ShotsService {
   }
 
   async getShotLikesByUsers(id: number) {
-    const shot = await this.shotRepository.findOne({
-      relations: {
-        likedUsers: true,
-      },
-      where: { id: id },
-    });
+    const likeCount = await this.shotRepository
+      .createQueryBuilder('shot')
+      .loadRelationCountAndMap('shot.likedUsers', 'shot.likedUsers')
+      .where('shot.id = :id', { id: id })
+      .getOne();
 
-    const count = shot.likedUsers.length;
-
-    return { totalLikes: count };
+    return { totalLikes: likeCount.likedUsers };
   }
 
   async debug() {
