@@ -228,31 +228,38 @@ export class ShotsService {
   }
 
   async likeShotByIdByUser(id: number, user: User) {
-    const shot = await this.shotRepository.findOne({
+    const userInShot = await this.shotRepository.findOne({
       relations: {
         likedUsers: true,
       },
-      where: { id: id },
+      where: {
+        likedUsers: {
+          id: user.id,
+        },
+      },
     });
 
     // check if user is already liked
     let action: LikeActionType;
 
-    const likedUsers = shot.likedUsers;
-    const checkUser = likedUsers.filter((u) => u.id === user.id);
+    const shot = await this.shotRepository.findOne({
+      relations: {
+        likedUsers: true,
+      },
+      where: {
+        id: id,
+      },
+    });
 
-    if (checkUser[0]) {
-      // console.log('FOUND');
-      action = LikeActionType.UNLIKE;
-      shot.likedUsers = likedUsers.filter((u) => u.id !== user.id);
-    } else {
-      // console.log('Not found');
-      action = LikeActionType.LIKE;
+    // if not current user is liked
+    if (!userInShot) {
       shot.likedUsers = [...shot.likedUsers, user];
+      action = LikeActionType.LIKE;
+    } else {
+      shot.likedUsers = shot.likedUsers.filter((u) => u.id !== user.id);
+      action = LikeActionType.UNLIKE;
     }
 
-    // debug
-    // console.log(shot);
     await this.shotRepository.save(shot);
     return { success: 'OK', action: action.toString() };
   }
