@@ -267,20 +267,55 @@ export class ShotsService {
   async getShotLikesByUsers(id: number) {
     const likeCount = await this.shotRepository
       .createQueryBuilder('shot')
-      .loadRelationCountAndMap('shot.likedUsers', 'shot.likedUsers')
+      .loadRelationCountAndMap('shot.totalLikes', 'shot.likedUsers')
       .where('shot.id = :id', { id: id })
       .getOne();
 
-    return { totalLikes: likeCount.likedUsers };
+    return { totalLikes: likeCount.totalLikes };
+  }
+
+  async getTotalViewsOfShot(id: number) {
+    const totalViews = await this.shotRepository
+      .createQueryBuilder('shot')
+      .loadRelationCountAndMap('shot.totalViews', 'shot.views')
+      .where('shot.id = :id', { id: id })
+      .getOne();
+
+    return { totalViews: totalViews };
+  }
+
+  async addViewToShot(id: number, user: User) {
+    const shot = await this.shotRepository.findOne({
+      relations: {
+        views: true,
+      },
+      where: {
+        id: id,
+      },
+    });
+
+    if (shot.views.length === 0) {
+      shot.views = [...shot.views, user];
+      await this.shotRepository.save(shot);
+      return { status: 'first view added' };
+    }
+
+    // check if user is already viewed
+    const viewed = shot.views.filter(
+      (current) => current.username === user.username,
+    );
+
+    if (viewed.length) {
+      // console.log(viewed);
+      return { status: 'already viewed' };
+    } else {
+      shot.views = [...shot.views, user];
+      await this.shotRepository.save(shot);
+      return { status: 'view added' };
+    }
   }
 
   async debug() {
-    // const reply = await this.replyRepository.find({
-    //   relations: {
-    //     comment: true,
-    //   },
-    // });
-    // console.log(reply);
-    await this.commentRepository.delete({ id: 1 });
+    return { id: 1 };
   }
 }

@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { ShotsController } from './shot.controller';
 import { ShotsService } from './shots.service';
 import { TypeOrmModule } from '@nestjs/typeorm';

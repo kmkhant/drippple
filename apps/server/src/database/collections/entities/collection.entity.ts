@@ -6,7 +6,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  JoinColumn,
 } from 'typeorm';
 import { User } from '@/users/entities/user.entity';
 import { Shot } from '@/shots/entities/shot.entity';
@@ -15,6 +14,10 @@ import { Shot } from '@/shots/entities/shot.entity';
 export class Collection {
   @PrimaryGeneratedColumn()
   id: number;
+
+  // collection name
+  @Column()
+  name: string;
 
   // implement comment owner
   @ManyToOne(() => User, (user) => user.collections, { onDelete: 'CASCADE' })
@@ -26,6 +29,7 @@ export class Collection {
 
   @Column()
   description: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

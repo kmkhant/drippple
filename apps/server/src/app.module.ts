@@ -16,6 +16,7 @@ import { DatabaseModule } from './database/database.module';
 // Integration Module
 import { MailModule } from './mail/mail.module';
 import { UsersModule } from '@/users/users.module';
+import { CollectionModule } from './database/collections/collection.module';
 
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { ShotModule } from '@/shots/shot.module';
@@ -32,6 +33,7 @@ import { ShotModule } from '@/shots/shot.module';
     AppModule,
     AuthModule,
     ShotModule,
+    CollectionModule,
     MailModule.register(),
     UsersModule,
   ],

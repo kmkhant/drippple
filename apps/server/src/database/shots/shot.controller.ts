@@ -10,13 +10,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { Shot } from './entities/shot.entity';
 import { User } from '@/decorators/user.decorator';
 import { ShotsService } from './shots.service';
 import { CreateShotDto } from './dto/shots/create-shot.dto';
 import { UpdateShotDto } from './dto/shots/update-shot.dto';
 import { JwtAuthGuard } from '@/auth/guards/jwt.guard';
-import { QueryByUserDto } from './dto/shots/query-shot.dto';
 import { CreateCommentDto } from './dto/comments/create-comment.dto';
 import { User as UserEntity } from '@/users/entities/user.entity';
 
@@ -32,8 +30,8 @@ export class ShotsController {
   /* Shot Routes */
   // Get shots by user
   @Get('/user/:id')
-  async getShotsByUser(@Param('id') queryByUserDto: QueryByUserDto) {
-    return this.shotService.getShotsByUser(queryByUserDto.id);
+  async getShotsByUser(@Param('id') id: number) {
+    return this.shotService.getShotsByUser(id);
   }
 
   // Create a shot
@@ -43,6 +41,10 @@ export class ShotsController {
   async createShot(@Body() createShotDto: CreateShotDto) {
     return this.shotService.createShot(createShotDto);
   }
+
+  // TODO UPDATE - SHOT
+
+  // TODO DELETE SHOT
 
   // Like a shot
   @UseGuards(JwtAuthGuard)
@@ -54,6 +56,17 @@ export class ShotsController {
   @Get('/:id/getLikes')
   async getShotLikesByUsers(@Param('id') id: number) {
     return this.shotService.getShotLikesByUsers(id);
+  }
+
+  @Get('/:id/views')
+  async getTotalViewsOfShot(@Param('id') id: number) {
+    return this.shotService.getTotalViewsOfShot(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('/:id/views')
+  async addViewToShot(@Param('id') id: number, @User() user: UserEntity) {
+    return this.shotService.addViewToShot(id, user);
   }
 
   /* Comment and Reply Routes */

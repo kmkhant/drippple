@@ -35,14 +35,17 @@ export class Shot {
   // collection
   @ManyToOne(() => Collection, (collection) => collection.shots, {
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   collection: Collection;
 
   @ManyToMany(() => User, (user) => user.likedShots, { onDelete: 'CASCADE' })
   likedUsers: User[];
+  totalLikes: number;
 
-  @ManyToOne(() => User, (user) => user.username)
-  views: number;
+  @OneToMany(() => User, (user) => user.shotsViewed)
+  views: User[];
+  totalViews: number;
 
   @Column({ default: 0 })
   saves: number;
