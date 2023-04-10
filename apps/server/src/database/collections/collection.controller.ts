@@ -59,5 +59,31 @@ export class CollectionController {
     return this.collectionService.deleteCollection(id, user);
   }
 
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @Patch('/:id/shot/:shotId/add')
+  async addShotToUserCollection(
+    @Param('id') id: number,
+    @Param('shotId') shotId: number,
+    @User() user: UserEntity,
+  ) {
+    return this.collectionService.addShotToUserCollection(id, shotId, user);
+  }
+
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @Patch('/:id/shot/:shotId/remove')
+  async removeShotFromUserCollection(
+    @Param('id') id: number,
+    @Param('shotId') shotId: number,
+    @User() user: UserEntity,
+  ) {
+    return this.collectionService.removeShotFromUserCollection(
+      id,
+      shotId,
+      user,
+    );
+  }
+
   // Todo Add shot to collections
 }

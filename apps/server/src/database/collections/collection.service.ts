@@ -8,6 +8,7 @@ import { UpdateCollectionDto } from './dto/update-collection.dto';
 import { Collection } from './entities/collection.entity';
 import { DataSource, Repository } from 'typeorm';
 import { User } from '@/users/entities/user.entity';
+import { Shot } from '@/shots/entities/shot.entity';
 
 @Injectable()
 export class CollectionService {
@@ -114,5 +115,61 @@ export class CollectionService {
     }
 
     return { success: `successfully deleted collection ${id}` };
+  }
+
+  async addShotToUserCollection(id: number, shotId: number, user: User) {
+    const shot = await this.dataSource
+      .getRepository(Shot)
+      .findOneBy({ id: shotId });
+
+    const collection = await this.collectionRepository.findOne({
+      relations: {
+        user: true,
+        shots: true,
+      },
+      where: {
+        id: id,
+      },
+    });
+
+    if (collection.user.id !== user.id)
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+
+    const checkIfAlreadyAdded = collection.shots.filter(
+      (s) => s.id === shot.id,
+    );
+
+    if (!checkIfAlreadyAdded.length) {
+      collection.shots.push(shot);
+      await this.collectionRepository.save(collection);
+      return { status: `added shotId: ${shotId} to collection: ${id}` };
+    } else {
+      return { status: 'Already Added to Collection' };
+    }
+  }
+
+  async removeShotFromUserCollection(id: number, shotId: number, user: User) {
+    const shot = await this.dataSource
+      .getRepository(Shot)
+      .findOneBy({ id: shotId });
+
+    const collection = await this.collectionRepository.findOne({
+      relations: {
+        user: true,
+        shots: true,
+      },
+      where: {
+        id: id,
+      },
+    });
+
+    if (collection.user.id !== user.id)
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+
+    collection.shots = collection.shots.filter((s) => s.id !== shot.id);
+
+    await this.collectionRepository.save(collection);
+
+    return { status: `Removed shot: ${shotId} from collection` };
   }
 }
