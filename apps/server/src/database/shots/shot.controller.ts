@@ -156,6 +156,8 @@ export class ShotsController {
     return this.shotService.deleteReply(id, userEntity);
   }
 
+  // Todo Category
+
   /* just a debug route */
   @Get('/debug')
   debug() {

@@ -9,7 +9,7 @@ import { UpdateShotDto } from './dto/shots/update-shot.dto';
 import { CreateCommentDto } from '@/shots/dto/comments/create-comment.dto';
 
 import { Shot } from './entities/shot.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { Comment } from './entities/comment.entity';
 import { User } from '@/users/entities/user.entity';
 import { Reply } from './entities/reply.entity';
@@ -313,6 +313,22 @@ export class ShotsService {
       await this.shotRepository.save(shot);
       return { status: 'view added' };
     }
+  }
+
+  // filter shots by tags
+  async shotByTag(
+    tag: string,
+    startIndex: number,
+    endIndex: number,
+  ): Promise<Shot[]> {
+    const shots = await this.shotRepository.find({
+      where: {
+        tags: In([tag]),
+      },
+    });
+
+    // used splice over slice for performance
+    return shots.splice(startIndex, endIndex);
   }
 
   async debug() {

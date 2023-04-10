@@ -129,4 +129,60 @@ export class UsersService {
       // pass
     }
   }
+
+  async followUserById(id: number, user: User) {
+    // check if currentUser is following itself
+    if (id === user.id) {
+      throw new HttpException('cannot follow yourself', HttpStatus.FORBIDDEN);
+    }
+
+    const userToFollow = await this.userRepository.findOne({
+      relations: {
+        followers: true,
+      },
+      where: {
+        id: id,
+      },
+    });
+
+    const currentUser = await this.userRepository.findOne({
+      relations: {
+        following: true,
+      },
+      where: {
+        id: user.id,
+      },
+    });
+
+    // check if currentUser is already to follow
+    // to the user if so
+    // remove user from following
+    const checkAlreadyFollowed = currentUser.following.filter(
+      (c) => c.id === userToFollow.id,
+    );
+
+    if (checkAlreadyFollowed.length) {
+      // already followed, unfollow user
+      currentUser.following = currentUser.following.filter(
+        (c) => c.id !== userToFollow.id,
+      );
+      userToFollow.followers = userToFollow.followers.filter(
+        (c) => c.id !== currentUser.id,
+      );
+    } else {
+      // haven't follow the user, follow the user
+      currentUser.following = [...currentUser.following, userToFollow];
+      userToFollow.followers = [...userToFollow.followers, currentUser];
+    }
+
+    // save to repository
+    await this.userRepository.save(currentUser);
+    await this.userRepository.save(userToFollow);
+
+    if (checkAlreadyFollowed.length) {
+      return { success: `Unfollowed ${userToFollow.username}` };
+    } else {
+      return { success: `Followed ${userToFollow.username}` };
+    }
+  }
 }
