@@ -9,12 +9,14 @@ import { UpdateShotDto } from './dto/shots/update-shot.dto';
 import { CreateCommentDto } from '@/shots/dto/comments/create-comment.dto';
 
 import { Shot } from './entities/shot.entity';
-import { DataSource, In, Repository } from 'typeorm';
+import { ArrayContains, DataSource, In, Repository } from 'typeorm';
 import { Comment } from './entities/comment.entity';
 import { User } from '@/users/entities/user.entity';
 import { Reply } from './entities/reply.entity';
 
-import { LikeActionType } from '@drippple/schema';
+// enum
+import { LikeActionType, ShotCategory } from '@drippple/schema';
+import { ShotType } from '@drippple/schema';
 
 @Injectable()
 export class ShotsService {
@@ -33,8 +35,9 @@ export class ShotsService {
   }
 
   // All Shot CRUD
-  async createShot(createShotDto: CreateShotDto): Promise<Shot> {
+  async createShot(createShotDto: CreateShotDto, user: User): Promise<Shot> {
     const shot = this.shotRepository.create(createShotDto);
+    shot.user = user;
     await this.shotRepository.save(shot);
 
     return shot;
@@ -57,8 +60,37 @@ export class ShotsService {
     return updatedShot;
   }
 
-  async deleteShot(id: number) {
+  async getShotById(id: number) {
+    const shot = await this.shotRepository.findOne({
+      relations: {
+        user: true,
+      },
+      where: {
+        id: id,
+      },
+    });
+
+    if (!shot) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+
+    return shot;
+  }
+
+  async deleteShot(id: number, user: User) {
+    console.log(id);
+    const shot = await this.shotRepository.findOne({
+      relations: {
+        user: true,
+      },
+      where: {
+        id: id,
+      },
+    });
+    if (user.id !== shot.user.id) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
     await this.shotRepository.delete(id);
+
+    return { status: 'success' };
   }
 
   // get shots by user
@@ -275,60 +307,75 @@ export class ShotsService {
   }
 
   async getTotalViewsOfShot(id: number) {
-    const totalViews = await this.shotRepository
-      .createQueryBuilder('shot')
-      .loadRelationCountAndMap('shot.totalViews', 'shot.views')
-      .where('shot.id = :id', { id: id })
-      .getOne();
+    const shot = await this.shotRepository.findOneBy({
+      id: id,
+    });
 
-    return { totalViews: totalViews };
+    return { totalViews: shot.totalViews };
   }
 
   async addViewToShot(id: number, user: User) {
     const shot = await this.shotRepository.findOne({
-      relations: {
-        views: true,
-      },
       where: {
         id: id,
       },
     });
 
-    if (shot.views.length === 0) {
-      shot.views = [...shot.views, user];
-      await this.shotRepository.save(shot);
-      return { status: 'first view added' };
-    }
+    shot.totalViews += 1;
 
-    // check if user is already viewed
-    const viewed = shot.views.filter(
-      (current) => current.username === user.username,
-    );
+    await this.shotRepository.save(shot);
 
-    if (viewed.length) {
-      // console.log(viewed);
-      return { status: 'already viewed' };
-    } else {
-      shot.views = [...shot.views, user];
-      await this.shotRepository.save(shot);
-      return { status: 'view added' };
-    }
+    return shot;
   }
 
   // filter shots by tags
-  async shotByTag(
-    tag: string,
+  async getShotsByTypeAndCategory(
+    type: ShotType,
+    category: ShotCategory,
     startIndex: number,
     endIndex: number,
-  ): Promise<Shot[]> {
-    const shots = await this.shotRepository.find({
-      where: {
-        tags: In([tag]),
-      },
-    });
+  ) {
+    if (
+      Object.values(ShotType).includes(type) &&
+      Object.values(ShotCategory).includes(category)
+    ) {
+      // start querying by category and sort by type
+      if (type === ShotType.RECENT) {
+        const shot = await this.shotRepository.find({
+          relations: {
+            user: true,
+          },
+          where: {
+            tags: ArrayContains([category]),
+          },
+          order: {
+            createdAt: 'DESC',
+          },
+        });
+        return shot;
+      } else if (type === ShotType.POPULAR) {
+        // sort by views
+        const shots = await this.shotRepository.find({
+          relations: {
+            user: true,
+          },
+          where: {
+            tags: ArrayContains([category]),
+          },
+          order: {
+            totalViews: 'DESC',
+          },
+        });
+        //
 
-    // used splice over slice for performance
-    return shots.splice(startIndex, endIndex);
+        return shots;
+      } else {
+        // sort by following
+        return 'FOLLOWING';
+      }
+    } else {
+      throw new HttpException('404 Not Found', HttpStatus.NOT_FOUND);
+    }
   }
 
   async debug() {

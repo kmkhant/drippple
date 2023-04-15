@@ -74,9 +74,6 @@ export class User {
   @ManyToMany(() => User, (user) => user.followers)
   following: User[];
 
-  @ManyToOne(() => Shot, (shot) => shot.views)
-  shotsViewed: Shot;
-
   @CreateDateColumn()
   createdAt: Date;
 

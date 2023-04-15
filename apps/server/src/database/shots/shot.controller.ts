@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 
@@ -17,6 +18,7 @@ import { UpdateShotDto } from './dto/shots/update-shot.dto';
 import { JwtAuthGuard } from '@/auth/guards/jwt.guard';
 import { CreateCommentDto } from './dto/comments/create-comment.dto';
 import { User as UserEntity } from '@/users/entities/user.entity';
+import { ShotCategory, ShotType } from '@drippple/schema';
 
 @Controller('shots')
 export class ShotsController {
@@ -34,17 +36,30 @@ export class ShotsController {
     return this.shotService.getShotsByUser(id);
   }
 
+  @Get('/:id')
+  async getShotById(@Param('id') id: number) {
+    return this.shotService.getShotById(id);
+  }
+
   // Create a shot
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   @Post('/create')
-  async createShot(@Body() createShotDto: CreateShotDto) {
-    return this.shotService.createShot(createShotDto);
+  async createShot(
+    @Body() createShotDto: CreateShotDto,
+    @User() user: UserEntity,
+  ) {
+    return this.shotService.createShot(createShotDto, user);
   }
 
   // TODO UPDATE - SHOT
 
   // TODO DELETE SHOT
+  @UseGuards(JwtAuthGuard)
+  @Delete('/:id')
+  async deleteShot(@Param('id') id: number, @User() user: UserEntity) {
+    return this.shotService.deleteShot(id, user);
+  }
 
   // Like a shot
   @UseGuards(JwtAuthGuard)
@@ -156,7 +171,21 @@ export class ShotsController {
     return this.shotService.deleteReply(id, userEntity);
   }
 
-  // Todo Category
+  // search
+  @Get('/:shotType/:category')
+  getShotByTypeAndCategory(
+    @Param('shotType') shotType: ShotType,
+    @Param('category') category: ShotCategory,
+    @Query('startIndex') startIndex: number,
+    @Query('endIndex') endIndex: number,
+  ) {
+    return this.shotService.getShotsByTypeAndCategory(
+      shotType,
+      category,
+      startIndex,
+      endIndex,
+    );
+  }
 
   /* just a debug route */
   @Get('/debug')

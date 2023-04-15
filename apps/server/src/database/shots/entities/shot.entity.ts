@@ -43,8 +43,7 @@ export class Shot {
   likedUsers: User[];
   totalLikes: number;
 
-  @OneToMany(() => User, (user) => user.shotsViewed)
-  views: User[];
+  @Column({ default: 0 })
   totalViews: number;
 
   @Column({ default: 0 })
