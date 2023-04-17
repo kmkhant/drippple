@@ -12,6 +12,7 @@ import { CreateGoogleUserDto } from './dto/create-google-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
+import { Shot } from '@/shots/entities/shot.entity';
 
 export const DELETION_TIME = 30 * 60 * 1000;
 
@@ -184,5 +185,16 @@ export class UsersService {
     } else {
       return { success: `Followed ${userToFollow.username}` };
     }
+  }
+
+  async getShotsFromUserId(id: number): Promise<Shot[]> {
+    const shots = await this.dataSource.getRepository(Shot).find({
+      where: {
+        user: {
+          id: id,
+        },
+      },
+    });
+    return shots;
   }
 }

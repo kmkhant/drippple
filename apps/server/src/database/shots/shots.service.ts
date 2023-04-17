@@ -9,7 +9,14 @@ import { UpdateShotDto } from './dto/shots/update-shot.dto';
 import { CreateCommentDto } from '@/shots/dto/comments/create-comment.dto';
 
 import { Shot } from './entities/shot.entity';
-import { ArrayContains, DataSource, In, Repository } from 'typeorm';
+import {
+  ArrayContains,
+  DataSource,
+  ILike,
+  In,
+  Like,
+  Repository,
+} from 'typeorm';
 import { Comment } from './entities/comment.entity';
 import { User } from '@/users/entities/user.entity';
 import { Reply } from './entities/reply.entity';
@@ -314,7 +321,7 @@ export class ShotsService {
     return { totalViews: shot.totalViews };
   }
 
-  async addViewToShot(id: number, user: User) {
+  async addViewToShot(id: number) {
     const shot = await this.shotRepository.findOne({
       where: {
         id: id,
@@ -332,8 +339,8 @@ export class ShotsService {
   async getShotsByTypeAndCategory(
     type: ShotType,
     category: ShotCategory,
-    startIndex: number,
-    endIndex: number,
+    q: string,
+    page: number,
   ) {
     if (
       Object.values(ShotType).includes(type) &&
@@ -341,41 +348,152 @@ export class ShotsService {
     ) {
       // start querying by category and sort by type
       if (type === ShotType.RECENT) {
-        const shot = await this.shotRepository.find({
-          relations: {
-            user: true,
-          },
-          where: {
-            tags: ArrayContains([category]),
-          },
-          order: {
-            createdAt: 'DESC',
-          },
-        });
-        return shot;
+        if (q.length) {
+          const shots = await this.shotRepository.find({
+            relations: {
+              user: true,
+            },
+            where: {
+              tags: ArrayContains([category]),
+              title: ILike(`%${q}%`),
+            },
+            order: {
+              createdAt: 'DESC',
+            },
+            skip: 20 * page,
+          });
+          return shots;
+        } else {
+          const shots = await this.shotRepository.find({
+            relations: {
+              user: true,
+            },
+            where: {
+              tags: ArrayContains([category]),
+            },
+            order: {
+              createdAt: 'DESC',
+            },
+            skip: 20 * page,
+          });
+          return shots;
+        }
       } else if (type === ShotType.POPULAR) {
         // sort by views
-        const shots = await this.shotRepository.find({
-          relations: {
-            user: true,
-          },
-          where: {
-            tags: ArrayContains([category]),
-          },
-          order: {
-            totalViews: 'DESC',
-          },
-        });
-        //
+        if (q.length) {
+          const shots = await this.shotRepository.find({
+            relations: {
+              user: true,
+            },
+            where: {
+              tags: ArrayContains([category]),
+              title: ILike(`%${q}%`),
+            },
+            order: {
+              totalViews: 'DESC',
+            },
+            skip: 20 * page,
+          });
+          return shots;
+        } else {
+          const shots = await this.shotRepository.find({
+            relations: {
+              user: true,
+            },
+            where: {
+              tags: ArrayContains([category]),
+            },
+            order: {
+              totalViews: 'DESC',
+            },
+            skip: 20 * page,
+          });
+          //
 
-        return shots;
-      } else {
-        // sort by following
-        return 'FOLLOWING';
+          return shots;
+        }
       }
     } else {
       throw new HttpException('404 Not Found', HttpStatus.NOT_FOUND);
     }
+  }
+
+  async getShotsByFollowingCategory(
+    category: ShotCategory,
+    q: string,
+    page: number,
+    user: User,
+  ) {
+    const currentUser = await this.dataSource.getRepository(User).findOne({
+      relations: {
+        following: true,
+      },
+      where: {
+        id: user.id,
+      },
+    });
+
+    const followingUserIds = currentUser.following.map((u) => u.id);
+
+    if (q.length) {
+      const shots = await this.shotRepository.find({
+        relations: {
+          user: true,
+        },
+        where: {
+          tags: ArrayContains([category]),
+          user: {
+            following: {
+              id: In(followingUserIds),
+            },
+          },
+          title: ILike(`%${q}%`),
+        },
+        order: {
+          createdAt: 'DESC',
+        },
+        skip: page * 20,
+      });
+
+      return shots;
+    } else {
+      const shots = await this.shotRepository.find({
+        relations: {
+          user: true,
+        },
+        where: {
+          tags: ArrayContains([category]),
+          user: {
+            following: {
+              id: In(followingUserIds),
+            },
+          },
+        },
+        order: {
+          createdAt: 'DESC',
+        },
+        skip: page * 20,
+      });
+
+      return shots;
+    }
+  }
+
+  async searchShotsByQuery(queryParam: string, page: number): Promise<Shot[]> {
+    const shots = await this.shotRepository.find({
+      relations: {
+        user: true,
+      },
+      where: {
+        tags: ArrayContains([queryParam]),
+      },
+      // default order by popularity
+      order: {
+        totalViews: 'DESC',
+      },
+      skip: page * 20,
+    });
+    return shots;
   }
 
   async debug() {

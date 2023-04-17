@@ -80,8 +80,8 @@ export class ShotsController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('/:id/views')
-  async addViewToShot(@Param('id') id: number, @User() user: UserEntity) {
-    return this.shotService.addViewToShot(id, user);
+  async addViewToShot(@Param('id') id: number) {
+    return this.shotService.addViewToShot(id);
   }
 
   /* Comment and Reply Routes */
@@ -171,19 +171,42 @@ export class ShotsController {
     return this.shotService.deleteReply(id, userEntity);
   }
 
-  // search
+  @Get('/search/:queryParam')
+  searchShotsByQuery(
+    @Param('queryParam') queryParam: string,
+    @Query('page') page: number,
+  ) {
+    return this.shotService.searchShotsByQuery(queryParam, page);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/following/:category')
+  getShotByFollowingCategory(
+    @Param('category') category: ShotCategory,
+    @Query('q') q: string,
+    @Query('page') page: number,
+    @User() user: UserEntity,
+  ) {
+    return this.shotService.getShotsByFollowingCategory(
+      category,
+      q,
+      page,
+      user,
+    );
+  }
+
   @Get('/:shotType/:category')
   getShotByTypeAndCategory(
     @Param('shotType') shotType: ShotType,
     @Param('category') category: ShotCategory,
-    @Query('startIndex') startIndex: number,
-    @Query('endIndex') endIndex: number,
+    @Query('q') q: string,
+    @Query('page') page: number,
   ) {
     return this.shotService.getShotsByTypeAndCategory(
       shotType,
       category,
-      startIndex,
-      endIndex,
+      q,
+      page,
     );
   }
 

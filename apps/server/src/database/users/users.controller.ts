@@ -17,4 +17,9 @@ export class UsersController {
   async followUserById(@Param('id') id: number, @User() user: UserEntity) {
     return this.userService.followUserById(id, user);
   }
+
+  @Get('/:id/shots')
+  async getShotsFromUserId(@Param('id') id: number) {
+    return this.userService.getShotsFromUserId(id);
+  }
 }
