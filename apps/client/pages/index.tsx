@@ -5,7 +5,7 @@ import ShotsSection from "@/Components/Shots Section/ShotsSection";
 
 const index: React.FC = () => {
 	return (
-		<div>
+		<div className="relative">
 			<HeroSection />
 			<ShotsSection />
 		</div>
