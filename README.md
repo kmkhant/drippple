@@ -1,2 +1,3 @@
 # drippple
-Almost Fully Functional Dribbble Clone 
+
+Functional Dribbble Clone 
