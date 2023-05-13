@@ -53,13 +53,44 @@ const index = () => {
 							<div className="w-1/2 h-[1px] bg-gray-300"></div>
 						</div>
 						<div className="mx-8">
-							<p className="font-bold text-md">
-								Username or Email Address
-							</p>
+							<div className="group">
+								<p className="font-bold text-md">
+									Username or Email Address
+								</p>
+								<input
+									type="email"
+									className="w-full outline-0 transition-all duration-200 ease-in-out bg-blue-100 rounded-md py-1 px-4 mt-2 ring-0 group-hover:ring-4 group-hover:ring-red-200 group-hover:ring-opacity-50"
+								/>
+							</div>
+
+							<div className="group w-full mt-4">
+								<div className="flex justify-between">
+									<p className="font-bold text-md">
+										Password
+									</p>
+									<p className="text-blue-700">
+										Forgot password?
+									</p>
+								</div>
+								<input
+									type="email"
+									className="w-full outline-0 transition-all duration-200 ease-in-out bg-blue-100 rounded-md py-1 px-4 mt-2 ring-0 group-hover:ring-4 group-hover:ring-red-200 group-hover:ring-opacity-50"
+								/>
+							</div>
+							<div className="mt-4 w-1/2">
+								<button className="py-2 px-4 bg-[#EA4C89] text-white font-medium text-center w-full rounded-md">
+									Sign In
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>
-				<div>hi</div>
+				<div className="flex justify-end p-8 text-sm">
+					Not a member? &nbsp;
+					<Link href="#" className="text-blue-700">
+						Sign up now
+					</Link>
+				</div>
 			</div>
 		</main>
 	);
