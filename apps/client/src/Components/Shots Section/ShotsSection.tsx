@@ -4,13 +4,6 @@ import {
 	faMagnifyingGlass,
 	faPaintRoller,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-	faFacebook,
-	faDribbble,
-	faTwitter,
-	faInstagram,
-	faPinterest,
-} from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, {
 	Fragment,
@@ -23,13 +16,12 @@ import { Menu, Transition } from "@headlessui/react";
 import { faker } from "@faker-js/faker";
 import ShotCard from "./ShotCard";
 import { useIsInViewport } from "@/hooks/useIsInViewPort";
-import Link from "next/link";
 import ScrollToTopBtn from "../Buttons/scrollToTopBtn";
-import Footer from "../Footer/Footer";
 
 interface IShotData {
 	name: string;
 	shortUrl: string;
+	shortTitle: string;
 	profileUrl: string;
 	likes: number;
 	views: number;
@@ -69,6 +61,7 @@ const ShotsSection: React.FC = () => {
 				(c = {
 					name: faker.name.fullName(),
 					shortUrl: `https://picsum.photos/seed/${faker.name.fullName()}/400/300`,
+					shortTitle: faker.music.songName(),
 					profileUrl: `https://picsum.photos/seed/${
 						Math.random() * 1000
 					}/50/50`,
@@ -492,8 +485,10 @@ const ShotsSection: React.FC = () => {
 					{fakeShots.map((data, idx) => (
 						<ShotCard
 							key={idx}
+							id={idx.toString()}
 							name={data.name}
 							shortUrl={data.shortUrl}
+							shortTitle={data.shortTitle}
 							profileUrl={data.profileUrl}
 							likes={data.likes}
 							views={data.views}

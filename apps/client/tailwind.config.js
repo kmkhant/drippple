@@ -5,7 +5,12 @@ module.exports = {
 		"./pages/**/*.{js,ts,jsx,tsx,mdx}",
 	],
 	theme: {
-		extend: {},
+		extend: {
+			backgroundPosition: {
+				"pos-0": "0% 0%",
+				"pos-100": "100% 100%",
+			},
+		},
 	},
 	plugins: [],
 };

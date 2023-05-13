@@ -4,9 +4,14 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
 	faChevronDown,
+	faEllipsis,
 	faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { Listbox, Transition } from "@headlessui/react";
+import {
+	Listbox,
+	Menu,
+	Transition,
+} from "@headlessui/react";
 import Link from "next/link";
 
 interface IUserProfileData {
@@ -27,11 +32,17 @@ const UserProfile: React.FC<IUserProfileData> = ({
 	const [selectedType, setSelectedType] =
 		useState<string>("Popular Shots");
 
+	const router = useRouter();
+
+	const paths = router.pathname.split("/");
+
+	const path = paths[paths.length - 1];
+
 	return (
 		<>
 			<div className="flex justify-center items-center p-8">
-				<div className="flex items-center space-x-3">
-					<div>
+				<div className="flex items-center space-x-10">
+					<div className="self-start">
 						<Image
 							src={`https://picsum.photos/seed/${
 								Math.random() * 1000
@@ -52,10 +63,49 @@ const UserProfile: React.FC<IUserProfileData> = ({
 						<p className="text-md text-gray-400">
 							{description}
 						</p>
-						<div>
-							<button className="bg-gray-200 py-1 px-2 rounded-lg text-sm">
-								<FontAwesomeIcon icon={faPlus} /> Follow
-							</button>
+						<div className="flex space-x-3 items-center">
+							<div>
+								<button className="bg-gray-200 py-1.5 px-3 rounded-lg text-sm">
+									<FontAwesomeIcon icon={faPlus} />{" "}
+									&nbsp;&nbsp;Follow
+								</button>
+							</div>
+							<Menu as="div">
+								<Menu.Button className="bg-white px-3 py-1 rounded-lg border border-gray-200">
+									<FontAwesomeIcon icon={faEllipsis} />
+								</Menu.Button>
+								<Transition
+									as={Fragment}
+									enter="transition ease-out duration-100"
+									enterFrom="transform opacity-0 scale-95"
+									enterTo="transform opacity-100 scale-100"
+									leave="transition ease-in duration-75"
+									leaveFrom="transform opacity-100 scale-100"
+									leaveTo="transform opacity-0 scale-95"
+								>
+									<Menu.Items className="absolute mt-2 w-56 divide-y text-sm divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+										<div className="px-4 py-2">
+											<Menu.Item>
+												<div className="mt-2 text-gray-500 cursor-pointer">
+													Add or remove from lists...
+												</div>
+											</Menu.Item>
+										</div>
+										<div className="px-4 py-2">
+											<Menu.Item>
+												<div className="my-2 text-gray-500 cursor-pointer">
+													Block {name}
+												</div>
+											</Menu.Item>
+											<Menu.Item>
+												<div className="my-2 text-gray-500 cursor-pointer">
+													Report {name}
+												</div>
+											</Menu.Item>
+										</div>
+									</Menu.Items>
+								</Transition>
+							</Menu>
 						</div>
 					</div>
 				</div>
@@ -64,7 +114,13 @@ const UserProfile: React.FC<IUserProfileData> = ({
 				<div className="flex space-x-3">
 					<div>
 						<Link href={`/${id}`}>
-							<span className="font-semibold">Work</span>{" "}
+							<span
+								className={`${
+									path === "[id]" ? "font-semibold" : ""
+								} `}
+							>
+								Work
+							</span>{" "}
 						</Link>
 						<span className="font-medium text-gray-400">
 							&nbsp;{43}
@@ -72,7 +128,13 @@ const UserProfile: React.FC<IUserProfileData> = ({
 					</div>
 					<div>
 						<Link href={`/${id}/collections`}>
-							<span className="font-medium">
+							<span
+								className={`${
+									path === "collections"
+										? "font-semibold"
+										: ""
+								} `}
+							>
 								Collections
 							</span>{" "}
 						</Link>
@@ -82,7 +144,11 @@ const UserProfile: React.FC<IUserProfileData> = ({
 					</div>
 					<div>
 						<Link href="#">
-							<span className="font-medium">
+							<span
+								className={`${
+									path === "likes" ? "font-semibold" : ""
+								} `}
+							>
 								Liked Shots
 							</span>{" "}
 						</Link>
@@ -113,14 +179,14 @@ const UserProfile: React.FC<IUserProfileData> = ({
 								leaveFrom="opacity-100"
 								leaveTo="opacity-0"
 							>
-								<Listbox.Options className="absolute mt-2 max-h-60 w-full rounded-md bg-white py-1 text-base outline outline-1 outline-gray-100 shadow-md">
+								<Listbox.Options className="absolute z-10 mt-2 max-h-60 w-full rounded-md bg-white py-1 text-base outline outline-1 outline-gray-100 shadow-md">
 									<Listbox.Option value="Popular Shots">
-										<p className="text-center py-2 hover:bg-gray-300 cursor-pointer">
+										<p className="text-center py-2 hover:bg-gray-200 cursor-pointer">
 											Popular Shots
 										</p>
 									</Listbox.Option>
 									<Listbox.Option value="Recent Shots">
-										<p className="text-center py-2 hover:bg-gray-300 cursor-pointer">
+										<p className="text-center py-2 hover:bg-gray-200 cursor-pointer">
 											Recent Shots
 										</p>
 									</Listbox.Option>

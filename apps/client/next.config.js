@@ -4,7 +4,7 @@ const nextConfig = {
 		appDir: true,
 	},
 	images: {
-		domains: ["picsum.photos"],
+		domains: ["picsum.photos", "cdn.dribbble.com"],
 	},
 };
 

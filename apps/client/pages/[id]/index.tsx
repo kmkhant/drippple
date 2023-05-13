@@ -10,19 +10,13 @@ import { faker } from "@faker-js/faker";
 import UserProfile from "@/Components/UserProfile/UserProfile";
 import ShotCard from "@/Components/Shots Section/ShotCard";
 import { useIsInViewport } from "@/hooks/useIsInViewPort";
-
-interface IShotData {
-	name: string;
-	shortUrl: string;
-	profileUrl: string;
-	likes: number;
-	views: number;
-}
+import { IShotData } from "../../types";
 
 const User: NextPage = () => {
 	const router = useRouter();
 	const { id } = router.query;
 
+	// fetch id and if not found redirect to 404
 	console.log(id);
 
 	const [selectedType, setSelectedType] =
@@ -44,6 +38,8 @@ const User: NextPage = () => {
 					profileUrl: `https://picsum.photos/seed/${
 						Math.random() * 1000
 					}/50/50`,
+					title: faker.music.songName(),
+					shortTitle: faker.music.songName(),
 					likes: Math.floor(
 						Math.random() * (19999 - 1000 + 1) + 1000
 					),
@@ -121,7 +117,9 @@ const User: NextPage = () => {
 					{fakeShots.map((data, idx) => (
 						<ShotCard
 							key={idx}
+							id={idx.toString()}
 							name={data.name}
+							shortTitle={data.title}
 							shortUrl={data.shortUrl}
 							profileUrl={data.profileUrl}
 							likes={data.likes}
