@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import classes from "./Navbar.module.css";
 
 const Navbar = () => {
+	// ["", "/signup/new"];
 	return (
 		<nav className={classes.navbar}>
 			<div className={classes.navbar_desktop_left}>
@@ -41,12 +42,18 @@ const Navbar = () => {
 						</Link>
 					</li>
 					<li>
-						<Link href="" className={classes.signIn}>
+						<Link
+							href="/session/new"
+							className={classes.signIn}
+						>
 							Sign in
 						</Link>
 					</li>
 					<li>
-						<Link href="" className={classes.signUp}>
+						<Link
+							href="/signup/new"
+							className={classes.signUp}
+						>
 							Sign up
 						</Link>
 					</li>

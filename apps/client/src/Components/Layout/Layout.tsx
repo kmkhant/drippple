@@ -14,7 +14,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
 	const hideFlag = hide.includes(router.pathname);
 
-	console.log(hideFlag);
+	// console.log(hideFlag);
 
 	return (
 		<>

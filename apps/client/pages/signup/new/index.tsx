@@ -114,9 +114,12 @@ const index = () => {
 					</div>
 				</div>
 				<div className="flex justify-end p-8 text-sm">
-					Not a member? &nbsp;
-					<Link href="#" className="text-blue-700">
-						Sign up now
+					Already a member? &nbsp;
+					<Link
+						href="/session/new"
+						className="text-blue-700"
+					>
+						Sign In
 					</Link>
 				</div>
 			</div>

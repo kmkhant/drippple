@@ -1,3 +1,5 @@
+import { User } from "./user";
+
 export enum LikeActionType {
 	LIKE = "likedAction",
 	UNLIKE = "unlikedAction",
@@ -20,3 +22,20 @@ export enum ShotCategory {
 	TYPOGRAPHY = "typography",
 	WEB_DESIGN = "webDesign",
 }
+
+export type Shot = {
+	id: number;
+	title: string;
+	description: string;
+	shotImage: string;
+	user: User;
+	// collection: Collection;
+	likedUsers: User[];
+	totalLikes: number;
+	totalViews: number;
+	saves: number;
+	comments: Comment[];
+	tags: string[];
+	createdAt: Date;
+	updatedAt: Date;
+};

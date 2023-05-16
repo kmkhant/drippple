@@ -1,8 +1,47 @@
-import React from "react";
+import React, {
+	ChangeEventHandler,
+	useRef,
+	useState,
+} from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 const index = () => {
+	const emailInputRef = useRef<HTMLInputElement>(null);
+	const passwordInputRef = useRef<HTMLInputElement>(null);
+
+	const [emailError, setEmailError] =
+		useState<boolean>(false);
+
+	const handleClick = (e: React.MouseEvent) => {
+		e.preventDefault();
+
+		console.log(emailInputRef.current?.value);
+		console.log(passwordInputRef.current?.value);
+	};
+
+	const handleEmailChange = (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => {
+		const email = e.currentTarget.value;
+
+		function isValidEmail(email: string) {
+			return /\S+@\S+\.\S+/.test(email);
+		}
+
+		if (email.length) {
+			const valid = isValidEmail(email);
+
+			if (valid) {
+				setEmailError(false);
+			} else {
+				setEmailError(true);
+			}
+		} else {
+			setEmailError(false);
+		}
+	};
+
 	return (
 		<main>
 			<div className="grid grid-cols-4 overflow-hidden">
@@ -15,7 +54,7 @@ const index = () => {
 						</div>
 						<div>
 							<p className="text-4xl text-orange-900 font-bold opacity-80">
-								Discover the world’s top Designers &
+								Discover the world&apos;s top Designers &
 								Creatives.
 							</p>
 						</div>
@@ -59,7 +98,13 @@ const index = () => {
 								</p>
 								<input
 									type="email"
-									className="w-full outline-0 transition-all duration-200 ease-in-out bg-blue-100 rounded-md py-1 px-4 mt-2 ring-0 group-hover:ring-4 group-hover:ring-red-200 group-hover:ring-opacity-50"
+									className={`w-full outline-0 transition-all duration-200 ease-in-out ${
+										emailError
+											? "bg-red-400"
+											: "bg-blue-100"
+									} rounded-md py-1 px-4 mt-2 ring-0 group-hover:ring-4 group-hover:ring-red-200 group-hover:ring-opacity-50`}
+									ref={emailInputRef}
+									onChange={handleEmailChange}
 								/>
 							</div>
 
@@ -73,12 +118,16 @@ const index = () => {
 									</p>
 								</div>
 								<input
-									type="email"
-									className="w-full outline-0 transition-all duration-200 ease-in-out bg-blue-100 rounded-md py-1 px-4 mt-2 ring-0 group-hover:ring-4 group-hover:ring-red-200 group-hover:ring-opacity-50"
+									type="password"
+									className={`w-full outline-0 transition-all duration-200 ease-in-out rounded-md bg-blue-100 py-1 px-4 mt-2 ring-0 group-hover:ring-4 group-hover:ring-red-200 group-hover:ring-opacity-50`}
+									ref={passwordInputRef}
 								/>
 							</div>
 							<div className="mt-4 w-1/2">
-								<button className="py-2 px-4 bg-[#EA4C89] text-white font-medium text-center w-full rounded-md">
+								<button
+									className="py-2 px-4 bg-[#EA4C89] text-white font-medium text-center w-full rounded-md"
+									onClick={handleClick}
+								>
 									Sign In
 								</button>
 							</div>
@@ -87,7 +136,10 @@ const index = () => {
 				</div>
 				<div className="flex justify-end p-8 text-sm">
 					Not a member? &nbsp;
-					<Link href="#" className="text-blue-700">
+					<Link
+						href="/signup/new"
+						className="text-blue-700"
+					>
 						Sign up now
 					</Link>
 				</div>
