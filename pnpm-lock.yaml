@@ -9,6 +9,7 @@ importers:
       '@typescript-eslint/parser': ^5.48.2
       cross-env: ^7.0.3
       cross-var: ^1.1.0
+      dotenv-cli: ^7.2.1
       env-cmd: ^10.1.0
       eslint: ^8.32.0
       eslint-plugin-import: ^2.27.5
@@ -29,6 +30,7 @@ importers:
       '@types/node': 18.11.18
       '@typescript-eslint/eslint-plugin': 5.55.0_342y7v4tc7ytrrysmit6jo4wri
       '@typescript-eslint/parser': 5.55.0_vgl77cfdswitgr47lm5swmv43m
+      dotenv-cli: 7.2.1
       eslint: 8.36.0
       eslint-plugin-import: 2.27.5_a7er6olmtneep4uytpot6gt7wu
       eslint-plugin-simple-import-sort: 9.0.0_eslint@8.36.0
@@ -48,6 +50,7 @@ importers:
       '@fortawesome/free-solid-svg-icons': ^6.4.0
       '@fortawesome/react-fontawesome': ^0.2.0
       '@headlessui/react': ^1.7.14
+      '@hookform/resolvers': ^3.1.0
       '@reduxjs/toolkit': ^1.9.5
       '@types/node': 18.15.11
       '@types/react': 18.0.31
@@ -56,12 +59,14 @@ importers:
       axios: ^1.4.0
       eslint: 8.37.0
       eslint-config-next: 13.2.4
+      joi: ^17.8.4
       kmformatter: ^0.0.3
       lodash: ^4.17.21
       next: 13.2.4
       postcss: ^8.4.22
       react: 18.2.0
       react-dom: 18.2.0
+      react-hook-form: ^7.43.9
       react-hot-toast: ^2.4.1
       react-query: ^3.39.3
       react-redux: ^8.0.5
@@ -78,6 +83,7 @@ importers:
       '@fortawesome/free-solid-svg-icons': 6.4.0
       '@fortawesome/react-fontawesome': 0.2.0_tumfstpptabomqiydababgzl3q
       '@headlessui/react': 1.7.14_biqbaboplfbrettd7655fr4n2y
+      '@hookform/resolvers': 3.1.0_react-hook-form@7.43.9
       '@reduxjs/toolkit': 1.9.5_k4ae6lp43ej6mezo3ztvx6pykq
       '@types/node': 18.15.11
       '@types/react': 18.0.31
@@ -85,11 +91,13 @@ importers:
       axios: 1.4.0
       eslint: 8.37.0
       eslint-config-next: 13.2.4_vwh6htx42aidho2qgfca5u5rwm
+      joi: 17.9.2
       kmformatter: 0.0.3
       lodash: 4.17.21
       next: 13.2.4_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      react-hook-form: 7.43.9_react@18.2.0
       react-hot-toast: 2.4.1_s7mghcr6idhb4d5ook54gl4n44
       react-query: 3.39.3_biqbaboplfbrettd7655fr4n2y
       react-redux: 8.0.5_yv6psnp2qqrvpsp6xbsm26r4t4
@@ -133,6 +141,7 @@ importers:
       class-validator: ^0.14.0
       cookie-parser: ^1.4.6
       dayjs: ^1.11.7
+      dotenv: ^16.0.3
       eslint: ^8.0.1
       eslint-config-prettier: ^8.3.0
       eslint-plugin-prettier: ^4.0.0
@@ -177,6 +186,7 @@ importers:
       class-validator: 0.14.0
       cookie-parser: 1.4.6
       dayjs: 1.11.7
+      dotenv: 16.0.3
       google-auth-library: 8.8.0
       joi: 17.9.2
       lodash: 4.17.21
@@ -845,6 +855,14 @@ packages:
       client-only: 0.0.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@hookform/resolvers/3.1.0_react-hook-form@7.43.9:
+    resolution: {integrity: sha512-z0A8K+Nxq+f83Whm/ajlwE6VtQlp/yPHZnXw7XWVPIGm1Vx0QV8KThU3BpbBRfAZ7/dYqCKKBNnQh85BkmBKkA==}
+    peerDependencies:
+      react-hook-form: ^7.0.0
+    dependencies:
+      react-hook-form: 7.43.9_react@18.2.0
     dev: false
 
   /@humanwhocodes/config-array/0.11.8:
@@ -4379,10 +4397,19 @@ packages:
       is-obj: 2.0.0
     dev: true
 
+  /dotenv-cli/7.2.1:
+    resolution: {integrity: sha512-ODHbGTskqRtXAzZapDPvgNuDVQApu4oKX8lZW7Y0+9hKA6le1ZJlyRS687oU9FXjOVEDU/VFV6zI125HzhM1UQ==}
+    hasBin: true
+    dependencies:
+      cross-spawn: 7.0.3
+      dotenv: 16.0.3
+      dotenv-expand: 10.0.0
+      minimist: 1.2.8
+    dev: true
+
   /dotenv-expand/10.0.0:
     resolution: {integrity: sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==}
     engines: {node: '>=12'}
-    dev: false
 
   /dotenv-expand/5.1.0:
     resolution: {integrity: sha512-YXQl1DSa4/PQyRfgrv6aoNjhasp/p4qs9FjJ4q4cQk+8m4r6k4ZSiEyytKG8f8W9gi8WsQtIObNmKd+tMzNTmA==}
@@ -4391,7 +4418,6 @@ packages:
   /dotenv/16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
     engines: {node: '>=12'}
-    dev: false
 
   /dotenv/8.6.0:
     resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
@@ -8404,6 +8430,15 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
+    dev: false
+
+  /react-hook-form/7.43.9_react@18.2.0:
+    resolution: {integrity: sha512-AUDN3Pz2NSeoxQ7Hs6OhQhDr6gtF9YRuutGDwPQqhSUAHJSgGl2VeY3qN19MG0SucpjgDiuMJ4iC5T5uB+eaNQ==}
+    engines: {node: '>=12.22.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17 || ^18
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react-hot-toast/2.4.1_s7mghcr6idhb4d5ook54gl4n44:

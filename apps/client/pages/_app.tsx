@@ -22,6 +22,13 @@ function MyApp({ Component, pageProps }: AppProps) {
 					<Layout>
 						<Component {...pageProps} />
 					</Layout>
+					<Toaster
+						position="bottom-right"
+						toastOptions={{
+							duration: 3000,
+							className: "toast",
+						}}
+					/>
 				</QueryClientProvider>
 			</PersistGate>
 		</ReduxProvider>

@@ -1,4 +1,4 @@
-import storageSession from "redux-persist/lib/storage/session";
+import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import pp from "redux-persist/lib/storage";
 
 const createNoopStorage = () => ({
@@ -15,7 +15,7 @@ const createNoopStorage = () => ({
 
 const storage =
 	typeof window !== "undefined"
-		? storageSession
+		? createWebStorage("local")
 		: createNoopStorage();
 
 export default storage;

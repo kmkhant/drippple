@@ -53,6 +53,7 @@ const validationSchema = Joi.object({
     NestConfigModule.forRoot({
       load: [appConfig, authConfig, databaseConfig, googleConfig, mailConfig],
       validationSchema: validationSchema,
+      envFilePath: '.env.local',
     }),
   ],
 })

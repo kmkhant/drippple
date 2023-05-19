@@ -1,3 +1,5 @@
+import store from "@/store";
+import { logout } from "@/store/auth/authSlice";
 import env from "@beam-australia/react-env";
 import _axios, { AxiosError } from "axios";
 import { error } from "console";
@@ -14,12 +16,16 @@ export type ServerError = {
 	statusCode: number;
 };
 
-const baseURL = env("SERVER_URL") || "/api";
+const baseURL =
+	process.env.NEXT_PUBLIC_SERVER_URL || "/api";
 const axios = _axios.create({ baseURL });
 
 axios.interceptors.request.use((config) => {
-	// const { accessToken } = store.getState().auth;
-	// config.headers.set("Authorization", `Bearer ${accessToken}`);
+	const { accessToken } = store.getState().auth;
+	config.headers.set(
+		"Authorization",
+		`Bearer ${accessToken}`
+	);
 
 	return config;
 });
@@ -38,7 +44,8 @@ axios.interceptors.response.use(
 
 			if (code === 401 || code === 404) {
 				// dispatch logout
-				router.push("/");
+				store.dispatch(logout());
+				router.push("/session/new");
 			}
 
 			throw errorObject;

@@ -52,7 +52,6 @@ export class AuthController {
   @Post('login')
   async login(@User() user: UserEntity) {
     const accessToken = this.authService.getAccessToken(user.id);
-
     return { user, accessToken };
   }
 

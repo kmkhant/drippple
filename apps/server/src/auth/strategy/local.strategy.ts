@@ -13,6 +13,7 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
   }
 
   async validate(identifier: string, password: string): Promise<User> {
+    // console.log(identifier);
     return this.authService.getUser(identifier, password);
   }
 }

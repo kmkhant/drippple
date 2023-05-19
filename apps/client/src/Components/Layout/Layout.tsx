@@ -7,7 +7,11 @@ interface LayoutProps {
 	children: React.ReactNode;
 }
 
-const hide = ["/session/new", "/signup/new"];
+const hide = [
+	"/session/new",
+	"/signup/new",
+	"/uploads/new",
+];
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
 	const router = useRouter();

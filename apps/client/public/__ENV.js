@@ -1,0 +1,1 @@
+window.__ENV = {"PUBLIC_FLAG_DISABLE_SIGNUPS":"false","PUBLIC_GOOGLE_CLIENT_ID":"1013165536691-5b7lk6o6hcd6susbqtvqsqqjlb405u5d.apps.googleusercontent.com","PUBLIC_SERVER_URL":"http://localhost:3100","PUBLIC_URL":"http://localhost:3000","REACT_ENV_PREFIX":"PUBLIC"};
