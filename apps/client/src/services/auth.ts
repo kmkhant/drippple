@@ -89,4 +89,11 @@ export const register = async (
 	>("/auth/register", registerParams);
 
 	// dispatch
+	store.dispatch(setUser(user));
+	store.dispatch(setAccessToken(accessToken));
+
+	toast.success(
+		`Successfully registered in as ${user.username}. Redirecting...`
+	);
+	setTimeout(() => router.push("/"), 2000);
 };

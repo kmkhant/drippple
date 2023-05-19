@@ -81,7 +81,7 @@ const Navbar = () => {
 								>
 									<div className="w-10 h-10 rounded-full bg-blue-400 flex justify-center items-center">
 										<span className="text-white font-medium inline-block">
-											K
+											{user.name[0].toUpperCase()}
 										</span>
 									</div>
 									<Transition

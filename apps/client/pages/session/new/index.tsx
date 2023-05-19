@@ -67,10 +67,10 @@ const index = () => {
 		useState<boolean>(false);
 
 	const isMutating = useIsMutating();
-	const isLoading = useMemo(
-		() => isMutating > 0,
-		[isMutating]
-	);
+	// const isLoading = useMemo(
+	// 	() => isMutating > 0,
+	// 	[isMutating]
+	// );
 
 	const {
 		handleSubmit,
@@ -94,7 +94,7 @@ const index = () => {
 		password,
 	}: IFormValues) => {
 		await loginMutation({
-			identifier: identifier,
+			identifier,
 			password,
 		});
 	};

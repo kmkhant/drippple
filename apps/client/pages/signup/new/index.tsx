@@ -1,8 +1,122 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Joi from "joi";
+import {
+	Path,
+	UseFormRegister,
+	useForm,
+} from "react-hook-form";
+import { joiResolver } from "@hookform/resolvers/joi";
+import { useMutation } from "react-query";
+import { ServerError } from "@/services/axios";
+import { RegisterParams } from "@/services/auth";
+import { register as registerAuth } from "@/services/auth";
+interface ISignUpFormValues {
+	name: string;
+	username: string;
+	email: string;
+	password: string;
+	confirm_password: string;
+	terms: boolean;
+}
+
+const defaultSignUpState: ISignUpFormValues = {
+	name: "",
+	username: "",
+	email: "",
+	password: "",
+	confirm_password: "",
+	terms: false,
+};
+
+const schema = Joi.object({
+	name: Joi.string().required(),
+	username: Joi.string()
+		.lowercase()
+		.alphanum()
+		.min(3)
+		.max(30)
+		.required(),
+	email: Joi.string().email({ tlds: { allow: false } }),
+	password: Joi.string().min(8).max(30).required(),
+	confirm_password: Joi.any()
+		.valid(Joi.ref("password"))
+		.required(),
+	terms: Joi.boolean().invalid(false).required(),
+});
+
+type InputProps = {
+	label: Path<ISignUpFormValues>;
+	register: UseFormRegister<ISignUpFormValues>;
+};
+
+const TextInput = ({ label, register }: InputProps) => (
+	<>
+		<div className="group">
+			<label className="font-bold text-md capitalize">
+				{label}
+			</label>
+			<input
+				type={label === "email" ? "email" : "text"}
+				className={`w-full outline-0 transition-all duration-200 ease-in-out bg-blue-100 rounded-md py-1 px-4 mt-2 ring-0 group-hover:ring-4 group-hover:ring-red-200 group-hover:ring-opacity-50`}
+				{...register(label)}
+			/>
+		</div>
+	</>
+);
+
+const PasswordInput = ({ label, register }: InputProps) => (
+	<>
+		<div className="group">
+			<label className="font-bold text-md capitalize">
+				{label === "confirm_password"
+					? "Confirm Password"
+					: "Password"}
+			</label>
+			<input
+				type="password"
+				className={`w-full outline-0 transition-all duration-200 ease-in-out bg-blue-100 rounded-md py-1 px-4 mt-2 ring-0 group-hover:ring-4 group-hover:ring-red-200 group-hover:ring-opacity-50`}
+				{...register(label)}
+			/>
+		</div>
+	</>
+);
 
 const index = () => {
+	const {
+		handleSubmit,
+		register,
+		formState: { errors },
+	} = useForm<ISignUpFormValues>({
+		defaultValues: defaultSignUpState,
+		resolver: joiResolver(schema),
+	});
+
+	const onSubmit = async ({
+		name,
+		email,
+		username,
+		password,
+	}: ISignUpFormValues) => {
+		// alert(
+		// 	`name: ${name}, email: ${email}, username: ${username}, password: ${password}`
+		// );
+
+		await registerMutation({
+			name,
+			email,
+			username,
+			password,
+		});
+	};
+
+	const { mutateAsync: registerMutation } = useMutation<
+		void,
+		ServerError,
+		RegisterParams
+	>(registerAuth);
+
 	return (
 		<main>
 			<div className="grid grid-cols-4 overflow-hidden">
@@ -52,52 +166,68 @@ const index = () => {
 							<div>Or</div>
 							<div className="w-1/2 h-[1px] bg-gray-300"></div>
 						</div>
-						<div className="flex flex-col mx-8 space-y-4">
+						<form
+							className="flex flex-col mx-8 space-y-4"
+							onSubmit={handleSubmit(onSubmit)}
+						>
 							<div className="flex space-x-3 justify-between">
-								<div className="group">
-									<p className="font-bold text-md">Name</p>
-									<input
-										type="text"
-										className="w-full outline-0 transition-all duration-200 ease-in-out bg-gray-100 rounded-md py-1 px-4 mt-2 ring-0 group-hover:ring-4 group-hover:ring-red-200 group-hover:ring-opacity-50"
-									/>
-								</div>
-								<div className="group">
-									<p className="font-bold text-md">
-										Username
-									</p>
-									<input
-										type="text"
-										className="w-full outline-0 transition-all duration-200 ease-in-out bg-gray-100 rounded-md py-1 px-4 mt-2 ring-0 group-hover:ring-4 group-hover:ring-red-200 group-hover:ring-opacity-50"
-									/>
-								</div>
-							</div>
-
-							<div className="group ">
-								<p className="font-bold text-md">Email</p>
-								<input
-									type="email"
-									className="w-full outline-0 transition-all duration-200 ease-in-out bg-gray-100 rounded-md py-1 px-4 mt-2 ring-0 group-hover:ring-4 group-hover:ring-red-200 group-hover:ring-opacity-50"
+								<TextInput
+									label="name"
+									register={register}
+								/>
+								<TextInput
+									label="username"
+									register={register}
 								/>
 							</div>
+							{errors.name && (
+								<p className="text-red-400 font-medium">
+									{errors.name.message}
+								</p>
+							)}
+							{errors.username && (
+								<p className="text-red-400 font-medium">
+									{errors.username.message}
+								</p>
+							)}
 
-							<div className="group w-full ">
-								<div className="flex justify-between">
-									<p className="font-bold text-md">
-										Password
-									</p>
-								</div>
-								<input
-									type="text"
-									placeholder="6+ characters"
-									className="w-full outline-0 transition-all duration-200 ease-in-out bg-gray-100 rounded-md py-1 px-4 mt-2 ring-0 group-hover:ring-4 group-hover:ring-red-200 group-hover:ring-opacity-50 placeholder-slate-300"
-								/>
-							</div>
+							<TextInput
+								label="email"
+								register={register}
+							/>
+							{errors.email && (
+								<p className="text-red-400 font-medium">
+									{errors.email.message}
+								</p>
+							)}
+
+							<PasswordInput
+								label="password"
+								register={register}
+							/>
+							{errors.password && (
+								<p className="text-red-400 font-medium">
+									{errors.password.message}
+								</p>
+							)}
+
+							<PasswordInput
+								label="confirm_password"
+								register={register}
+							/>
+							{errors.confirm_password && (
+								<p className="text-red-400 font-medium">
+									confirm password must be the same as
+									password
+								</p>
+							)}
+
 							<div className="flex space-x-4 items-start">
 								<input
 									type="checkbox"
 									id="checkbox"
-									name="agreee"
 									className="w-10 h-10"
+									{...register("terms")}
 								/>
 								<p className="p-0 mt-2">
 									Creating an account means you’re okay with
@@ -105,12 +235,20 @@ const index = () => {
 									our default Notification Settings.
 								</p>
 							</div>
+							{errors.terms && (
+								<p className="text-red-400 font-medium">
+									You need to agree terms to sign up
+								</p>
+							)}
 							<div className=" w-1/2">
-								<button className="py-2 px-4 bg-[#EA4C89] text-white font-medium text-center w-full rounded-md hover:opacity-60">
+								<button
+									className="py-2 px-4 bg-[#EA4C89] text-white font-medium text-center w-full rounded-md hover:opacity-60"
+									type="submit"
+								>
 									Create Account
 								</button>
 							</div>
-						</div>
+						</form>
 					</div>
 				</div>
 				<div className="flex justify-end p-8 text-sm">
