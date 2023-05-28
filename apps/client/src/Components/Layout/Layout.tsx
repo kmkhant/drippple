@@ -11,12 +11,16 @@ const hide = [
 	"/session/new",
 	"/signup/new",
 	"/uploads/new",
+	"/uploads",
 ];
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
 	const router = useRouter();
 
-	const hideFlag = hide.includes(router.pathname);
+	const hideFlag =
+		router.pathname.match("/uploads/(.*)") ||
+		router.pathname.match("/session/(.*)") ||
+		router.pathname.match("/signup/(.*)");
 
 	// console.log(hideFlag);
 

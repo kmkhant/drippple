@@ -25,6 +25,7 @@
     "axios": "^1.4.0",
     "eslint": "8.37.0",
     "eslint-config-next": "13.2.4",
+    "framer-motion": "^10.12.12",
     "joi": "^17.8.4",
     "kmformatter": "^0.0.3",
     "lodash": "^4.17.21",

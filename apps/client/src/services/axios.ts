@@ -42,7 +42,7 @@ axios.interceptors.response.use(
 
 			toast.error(message);
 
-			if (code === 401 || code === 404) {
+			if (code === 401) {
 				// dispatch logout
 				store.dispatch(logout());
 				router.push("/session/new");

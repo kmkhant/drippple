@@ -55,8 +55,20 @@ export class ShotsService {
     return shots;
   }
 
-  async updateShot(id: number, updateShotDto: UpdateShotDto) {
-    const shot = await this.shotRepository.findOneBy({ id: id });
+  async updateShot(id: number, updateShotDto: UpdateShotDto, user: User) {
+    const shot = await this.shotRepository.findOne({
+      relations: {
+        user: true,
+      },
+      where: {
+        id,
+      },
+    });
+
+    if (shot.user.id !== user.id) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+
     const updatedShot = {
       ...shot,
       ...updateShotDto,
@@ -485,7 +497,7 @@ export class ShotsService {
         user: true,
       },
       where: {
-        tags: ArrayContains([queryParam]),
+        title: ILike(`%${queryParam}%`),
       },
       // default order by popularity
       order: {

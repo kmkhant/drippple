@@ -177,10 +177,11 @@ const Navbar = () => {
 										</div>
 									</Transition>
 								</div>
-
-								<button className="bg-[#ea4c89] py-2 px-4 rounded-lg font-medium text-white">
-									Upload
-								</button>
+								<Link href="/uploads/new">
+									<button className="bg-[#ea4c89] py-2 px-4 rounded-lg font-medium text-white">
+										Upload
+									</button>
+								</Link>
 							</div>
 						</>
 					) : (

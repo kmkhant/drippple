@@ -53,6 +53,16 @@ export class ShotsController {
   }
 
   // TODO UPDATE - SHOT
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @Patch('/:id/update')
+  async updateShot(
+    @Param('id') id: number,
+    @Body() updateShotDto: CreateShotDto,
+    @User() user: UserEntity,
+  ) {
+    return this.shotService.updateShot(id, updateShotDto, user);
+  }
 
   // TODO DELETE SHOT
   @UseGuards(JwtAuthGuard)

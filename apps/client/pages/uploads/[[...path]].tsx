@@ -1,28 +1,63 @@
 import { ServerError } from "@/services/axios";
-import { createShot } from "@/services/shot";
+import {
+	createShot,
+	getShotById,
+	updateShot,
+} from "@/services/shot";
 import {
 	faClose,
 	faCross,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { useMutation } from "react-query";
+import { GetServerSideProps } from "next";
+import { Shot } from "@drippple/schema";
 
-interface ICreatePost {
+interface UpdateShotDto {
 	title: string;
 	shotImage: string;
 	description: string;
 	tags: string[];
 }
 
-const index = () => {
+interface IEditPageProps {
+	data: Shot;
+}
+
+const index = ({ data }: IEditPageProps) => {
+	const router = useRouter();
+
+	const { path } = router.query;
+
+	let editId = -1234;
+	let type = "";
+	if (path) {
+		editId = parseInt(path[0]);
+		type = path[1];
+		if (type !== "edit") router.push("/404");
+	}
+
 	const titleRef = useRef<HTMLInputElement>(null);
 	const descriptionRef = useRef<HTMLInputElement>(null);
+	const imageInputRef = useRef<HTMLInputElement>(null);
 
-	const [shotImage, setShotImage] = useState<string>("");
+	const [shotImage, setShotImage] = useState<string>(
+		data.shotImage
+	);
 
-	const [tags, setTags] = useState<string[]>([]);
+	useEffect(() => {
+		if (titleRef.current)
+			titleRef.current.value = data.title;
+		if (descriptionRef.current)
+			descriptionRef.current.value = data.description;
+		if (imageInputRef.current)
+			imageInputRef.current.value = data.shotImage;
+	}, []);
+
+	const [tags, setTags] = useState<string[]>(data.tags);
 	const tagRef = useRef<HTMLInputElement>(null);
 
 	const onKeyDown = (e: React.KeyboardEvent) => {
@@ -48,22 +83,26 @@ const index = () => {
 		setTags(newTags);
 	};
 
-	const { mutateAsync: createPostMutation } = useMutation<
-		void,
-		ServerError,
-		ICreatePost
-	>(createShot);
+	const { mutateAsync: updateShotMutation } =
+		useMutation(updateShot);
 
 	const handleSubmit = async () => {
 		if (titleRef.current && descriptionRef.current) {
 			const title = titleRef.current.value;
 			const description = descriptionRef.current.value;
 
-			await createPostMutation({
+			let updateShotDto: UpdateShotDto = {
 				title,
 				description,
 				shotImage,
 				tags,
+			};
+
+			// alert(editId);
+
+			await updateShotMutation({
+				idx: editId,
+				updateShotDto,
 			});
 		}
 	};
@@ -89,7 +128,7 @@ const index = () => {
 							disabled={tags.length === 0}
 							onClick={handleSubmit}
 						>
-							Post
+							Save
 						</button>
 					</div>
 				</div>
@@ -97,22 +136,22 @@ const index = () => {
 			<section className="mx-12">
 				<div className="flex justify-center mt-16">
 					<div>
-						<div className="w-1/2">
+						<div className="">
 							<input
 								placeholder="Give me a name"
 								className="outline-0 text-6xl font-semibold"
 								ref={titleRef}
 							/>
 						</div>
-						<div className="flex w-1/2 mt-4 text-xl">
-							<div>
+						<div className="flex mt-4 text-xl justify-between">
+							<div className="w-full">
 								<div>
 									<p className="text-pink-500">
 										Project Image
 									</p>
 									<input
 										placeholder="enter image url"
-										className="outline-0 mt-2"
+										className="outline-0 mt-2 w-full"
 										onBlur={(c) =>
 											setShotImage(c.currentTarget.value)
 										}
@@ -120,6 +159,7 @@ const index = () => {
 											if (e.key === "Enter")
 												setShotImage(e.currentTarget.value);
 										}}
+										ref={imageInputRef}
 									/>
 								</div>
 							</div>
@@ -134,18 +174,14 @@ const index = () => {
 								</div>
 							)}
 						</div>
-						<div className="flex w-1/2 mt-4 text-xl">
-							<div>
-								<div>
-									<p className="text-pink-500">
-										Description
-									</p>
-									<input
-										placeholder="enter description"
-										className="outline-0 mt-2"
-										ref={descriptionRef}
-									/>
-								</div>
+						<div className="flex mt-4 text-xl">
+							<div className="w-full">
+								<p className="text-pink-500">Description</p>
+								<input
+									placeholder="enter description"
+									className="outline-0 mt-2 w-full"
+									ref={descriptionRef}
+								/>
 							</div>
 						</div>
 						<div className="flex w-1/2 mt-4 text-xl">
@@ -187,3 +223,22 @@ const index = () => {
 };
 
 export default index;
+export const getServerSideProps: GetServerSideProps<{
+	data: Shot;
+}> = async (context) => {
+	// Fetch data from api
+	const path = context.params?.path;
+	let editId = 999;
+	if (path) editId = parseInt(path[0]);
+
+	let res;
+	try {
+		res = await getShotById(editId);
+	} catch (e: any) {
+		return {
+			notFound: true,
+		};
+	}
+
+	return { props: { data: res } };
+};
